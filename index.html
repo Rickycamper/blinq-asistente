@@ -3,303 +3,430 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Blinq — Asistente Instagram</title>
+<title>Blinq — Consulta de Disponibilidad</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+  :root {
+    --blue: #0d22a8;
+    --blue-dark: #06124e;
+    --blue-light: #1a35d4;
+    --white: #ffffff;
+    --gray: #f4f5f9;
+    --text: #1a1a2e;
+    --muted: #7a7a9a;
+  }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    background: #f0f2f5;
+    font-family: 'Barlow', sans-serif;
+    background: var(--gray);
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 24px 16px;
+    color: var(--text);
   }
 
+  /* HEADER */
   .header {
-    width: 100%;
-    max-width: 700px;
-    background: #0d22a8;
-    border-radius: 16px;
-    padding: 20px 28px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 20px rgba(13,34,168,0.3);
+    background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 100%);
+    padding: 28px 20px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
   }
-  .header-logo {
-    font-size: 26px;
+  .header::before {
+    content: '';
+    position: absolute;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.07);
+    top: -150px; right: -100px;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.05);
+    bottom: -100px; left: -80px;
+  }
+  .logo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 42px;
     font-weight: 900;
     color: white;
     letter-spacing: -1px;
+    position: relative;
+    z-index: 1;
   }
-  .header-logo span { opacity: 0.6; }
+  .logo span { opacity: 0.5; }
   .header-sub {
-    color: rgba(255,255,255,0.7);
-    font-size: 13px;
-  }
-  .header-badge {
-    margin-left: auto;
-    background: rgba(255,255,255,0.15);
-    color: white;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 4px 10px;
-    border-radius: 20px;
-    white-space: nowrap;
+    color: rgba(255,255,255,0.65);
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 4px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    position: relative;
+    z-index: 1;
   }
 
-  .card {
-    width: 100%;
-    max-width: 700px;
+  /* SEARCH */
+  .search-wrap {
+    padding: 0 16px;
+    margin-top: -22px;
+    position: relative;
+    z-index: 10;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .search-box {
     background: white;
     border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-    margin-bottom: 16px;
-  }
-
-  .card-title {
-    font-size: 13px;
-    font-weight: 700;
-    color: #888;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 12px;
-  }
-
-  /* Config section */
-  .config-row {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 12px;
-  }
-  .config-row input {
-    flex: 1;
-    padding: 10px 14px;
-    border: 1.5px solid #e0e0e0;
-    border-radius: 10px;
-    font-size: 14px;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  .config-row input:focus { border-color: #0d22a8; }
-  .config-row label {
-    font-size: 12px;
-    color: #666;
-    margin-bottom: 4px;
-    display: block;
-  }
-  .config-field { flex: 1; }
-
-  /* Input area */
-  .message-area {
-    width: 100%;
-    min-height: 100px;
-    border: 1.5px solid #e0e0e0;
-    border-radius: 12px;
-    padding: 14px;
-    font-size: 14px;
-    font-family: inherit;
-    resize: vertical;
-    outline: none;
-    transition: border-color 0.2s;
-    line-height: 1.5;
-  }
-  .message-area:focus { border-color: #0d22a8; }
-  .message-area::placeholder { color: #bbb; }
-
-  .btn-generate {
-    width: 100%;
-    padding: 14px;
-    background: #0d22a8;
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-    margin-top: 12px;
-    transition: background 0.2s, transform 0.1s;
-    letter-spacing: 0.3px;
-  }
-  .btn-generate:hover { background: #0a1a8a; }
-  .btn-generate:active { transform: scale(0.99); }
-  .btn-generate:disabled { background: #bbb; cursor: not-allowed; }
-
-  /* Response */
-  .response-box {
-    background: #f8f9ff;
-    border: 1.5px solid #d0d7ff;
-    border-radius: 12px;
-    padding: 16px;
-    font-size: 14px;
-    line-height: 1.7;
-    color: #1a1a2e;
-    white-space: pre-wrap;
-    word-break: break-word;
-    min-height: 60px;
-  }
-
-  .response-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 12px;
-  }
-  .btn-copy {
-    flex: 1;
-    padding: 11px;
-    background: #0d22a8;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  .btn-copy:hover { background: #0a1a8a; }
-  .btn-copy.copied { background: #22a855; }
-  .btn-clear {
-    padding: 11px 18px;
-    background: white;
-    color: #888;
-    border: 1.5px solid #e0e0e0;
-    border-radius: 10px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .btn-clear:hover { border-color: #0d22a8; color: #0d22a8; }
-
-  .loading {
+    box-shadow: 0 8px 32px rgba(13,34,168,0.18);
     display: flex;
     align-items: center;
-    gap: 10px;
-    color: #888;
+    padding: 14px 18px;
+    gap: 12px;
+  }
+  .search-icon { font-size: 20px; flex-shrink: 0; }
+  .search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-family: 'Barlow', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text);
+    background: transparent;
+  }
+  .search-input::placeholder { color: #bbb; font-weight: 400; }
+  .search-clear {
+    background: var(--gray);
+    border: none;
+    border-radius: 8px;
+    width: 28px; height: 28px;
+    cursor: pointer;
     font-size: 14px;
-    padding: 12px 0;
+    color: var(--muted);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
   }
-  .dot { width: 7px; height: 7px; border-radius: 50%; background: #0d22a8; animation: bounce 1.2s infinite; }
-  .dot:nth-child(2) { animation-delay: 0.2s; }
-  .dot:nth-child(3) { animation-delay: 0.4s; }
-  @keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-8px)} }
+  .search-clear.visible { display: flex; }
 
-  .tip {
-    background: #fffbeb;
-    border: 1.5px solid #fde68a;
-    border-radius: 10px;
-    padding: 12px 14px;
+  /* CHIPS */
+  .chips-wrap {
+    padding: 16px 16px 0;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .chips {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+  }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip {
+    background: white;
+    border: 1.5px solid #e0e3ef;
+    color: var(--blue);
+    font-family: 'Barlow', sans-serif;
     font-size: 13px;
-    color: #92400e;
-    margin-top: 12px;
-    line-height: 1.5;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .chip:hover, .chip.active {
+    background: var(--blue);
+    color: white;
+    border-color: var(--blue);
   }
 
-  .whatsapp-num {
+  /* MAIN */
+  .main {
+    padding: 16px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 48px 20px;
+  }
+  .empty-emoji { font-size: 48px; margin-bottom: 12px; }
+  .empty-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .empty-sub { color: var(--muted); font-size: 14px; line-height: 1.5; }
+
+  /* RESULTS */
+  .results-count {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 12px;
+    padding: 0 2px;
+  }
+  .results-count span { color: var(--blue); }
+
+  .product-card {
+    background: white;
+    border-radius: 14px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .product-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(13,34,168,0.12);
+  }
+
+  .card-top {
+    padding: 16px 18px 12px;
+    border-bottom: 1px solid #f0f0f8;
+  }
+  .card-brand {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--blue);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+  .card-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.3;
+  }
+  .card-family {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+
+  .card-stock {
+    padding: 12px 18px;
+  }
+  .stock-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  .stock-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .stock-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: var(--gray);
+  }
+  .stock-item.available { background: #e8f5e9; }
+  .stock-item.unavailable { background: #fafafa; opacity: 0.6; }
+  .stock-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .available .stock-dot { background: #22a855; }
+  .unavailable .stock-dot { background: #ccc; }
+  .stock-info { flex: 1; min-width: 0; }
+  .stock-location {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .unavailable .stock-location { color: var(--muted); }
+  .stock-status {
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .available .stock-status { color: #22a855; font-weight: 600; }
+
+  /* WA buttons */
+  .card-actions {
+    padding: 0 18px 14px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .wa-btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: #e8f5e9;
-    border: 1px solid #a5d6a7;
-    border-radius: 8px;
-    padding: 8px 12px;
-    font-size: 13px;
-    color: #1b5e20;
-    font-weight: 600;
-    margin-top: 8px;
-  }
-
-  .examples {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 4px;
-  }
-  .example-chip {
-    background: #f0f2ff;
-    border: 1px solid #c7d0ff;
-    color: #0d22a8;
+    background: #25d366;
+    color: white;
+    text-decoration: none;
     font-size: 12px;
-    padding: 5px 12px;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: all 0.15s;
+    font-weight: 700;
+    padding: 7px 12px;
+    border-radius: 8px;
+    transition: background 0.15s, transform 0.1s;
     white-space: nowrap;
   }
-  .example-chip:hover { background: #0d22a8; color: white; }
+  .wa-btn:hover { background: #1db954; transform: scale(1.02); }
+  .wa-btn svg { width: 14px; height: 14px; fill: white; flex-shrink: 0; }
+
+  /* NO RESULTS */
+  .no-results {
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .no-results-emoji { font-size: 40px; margin-bottom: 12px; }
+  .no-results-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .no-results-sub { color: var(--muted); font-size: 14px; margin-bottom: 20px; }
+
+  .contact-all {
+    background: white;
+    border-radius: 14px;
+    padding: 16px 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .contact-all-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+  .contact-list { display: flex; flex-direction: column; gap: 8px; }
+  .contact-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: var(--gray);
+    border-radius: 10px;
+  }
+  .contact-loc { font-size: 13px; font-weight: 600; color: var(--text); }
+  .contact-wa {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #25d366;
+    color: white;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 10px;
+    border-radius: 7px;
+  }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    padding: 24px 16px 32px;
+    color: var(--muted);
+    font-size: 12px;
+  }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <div>
-    <div class="header-logo">blinq<span>.</span></div>
-    <div class="header-sub">Asistente de respuestas · Instagram DMs</div>
-  </div>
-  <div class="header-badge">🤖 IA + Inventario en vivo</div>
+  <div class="logo">blinq<span>.</span></div>
+  <div class="header-sub">Consulta de disponibilidad</div>
 </div>
 
-<!-- Config -->
-<div class="card">
-  <div class="card-title">⚙️ Configuración</div>
-  <div class="config-row">
-    <div class="config-field">
-      <label>Número de WhatsApp del vendedor</label>
-      <input type="text" id="whatsappNum" placeholder="ej: +507 6000-0000" value="+507 6000-0000">
-    </div>
-    <div class="config-field">
-      <label>Nombre del agente (opcional)</label>
-      <input type="text" id="agentName" placeholder="ej: Carlos">
-    </div>
+<div class="search-wrap">
+  <div class="search-box">
+    <span class="search-icon">🔍</span>
+    <input type="text" class="search-input" id="searchInput" placeholder="Busca un producto, marca o categoría..." oninput="handleSearch()" autocomplete="off">
+    <button class="search-clear" id="clearBtn" onclick="clearSearch()">✕</button>
   </div>
 </div>
 
-<!-- Input -->
-<div class="card">
-  <div class="card-title">💬 Mensaje del cliente</div>
-  <div class="examples">
-    <div class="example-chip" onclick="setExample('Tienen cartuchos HP 954XL negro?')">Cartucho HP</div>
-    <div class="example-chip" onclick="setExample('Quiero una impresora Epson, qué tienen disponible?')">Impresoras Epson</div>
-    <div class="example-chip" onclick="setExample('Tienen mouse logitech?')">Mouse Logitech</div>
-    <div class="example-chip" onclick="setExample('Cuál es su número de whatsapp?')">WhatsApp</div>
-    <div class="example-chip" onclick="setExample('Tienen tóner Canon para la IR 1643?')">Tóner Canon</div>
-    <div class="example-chip" onclick="setExample('Buenos días, tienen cámaras Hikvision disponibles?')">Cámaras</div>
+<div class="chips-wrap">
+  <div class="chips">
+    <div class="chip" onclick="searchChip('impresora')">🖨️ Impresoras</div>
+    <div class="chip" onclick="searchChip('toner')">🖤 Tóner</div>
+    <div class="chip" onclick="searchChip('tinta')">🎨 Tintas</div>
+    <div class="chip" onclick="searchChip('HP')">HP</div>
+    <div class="chip" onclick="searchChip('Canon')">Canon</div>
+    <div class="chip" onclick="searchChip('Epson')">Epson</div>
+    <div class="chip" onclick="searchChip('mouse')">🖱️ Mouse</div>
+    <div class="chip" onclick="searchChip('camara')">📷 Cámaras</div>
+    <div class="chip" onclick="searchChip('laptop')">💻 Laptops</div>
+    <div class="chip" onclick="searchChip('ups')">⚡ UPS</div>
   </div>
-  <textarea class="message-area" id="messageInput" placeholder="Pega aquí el mensaje del cliente de Instagram..." style="margin-top:12px"></textarea>
-  <button class="btn-generate" id="generateBtn" onclick="generateResponse()">✨ Generar Respuesta</button>
 </div>
 
-<!-- Response -->
-<div class="card" id="responseCard" style="display:none">
-  <div class="card-title">📋 Respuesta sugerida</div>
-  <div id="loadingIndicator" class="loading" style="display:none">
-    <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-    <span>Consultando inventario y generando respuesta...</span>
+<div class="main" id="mainContent">
+  <div class="empty-state">
+    <div class="empty-emoji">📦</div>
+    <div class="empty-title">¿Qué estás buscando?</div>
+    <div class="empty-sub">Escribe el nombre del producto, marca o categoría y te decimos en qué sucursal está disponible.</div>
   </div>
-  <div class="response-box" id="responseText" style="display:none"></div>
-  <div class="response-actions" id="responseActions" style="display:none">
-    <button class="btn-copy" id="copyBtn" onclick="copyResponse()">📋 Copiar respuesta</button>
-    <button class="btn-clear" onclick="clearAll()">Limpiar</button>
-  </div>
+</div>
+
+<div class="footer">
+  blinq. Panama &nbsp;·&nbsp; Tecnología para tu negocio
 </div>
 
 <script>
-// ===== INVENTORY DATA =====
-const INVENTORY = [{"nombre":"ROLLO PAPEL TERMICO 80mmX70mm/DURANGO","familia":"SUMINISTROS","marca":"GENERICO","stock":{"David":1649,"Chiriquí":263,"Santiago":190,"Penonomé":98}},{"nombre":"CABLE UTP CAT6 X METRO","familia":"REDES","marca":"NEXXT","stock":{"David":509,"Chiriquí":60,"Santiago":0,"Penonomé":0}},{"nombre":"ROLLO 57MM X 50MM","familia":"SUMINISTROS","marca":"GENERICO","stock":{"David":416,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"ROLLO  57Mx37M","familia":"SUMINISTROS","marca":"GENERICO","stock":{"David":279,"Chiriquí":367,"Santiago":100,"Penonomé":0}},{"nombre":"ROLLO DE PAPEL TERMICO 80 X 60 MM","familia":"SUMINISTROS","marca":"GENERICO","stock":{"David":243,"Chiriquí":150,"Santiago":100,"Penonomé":0}},{"nombre":"PAPEL XEROGR.8.5X11;20LBS 0151V857 CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":228,"Chiriquí":51,"Santiago":13,"Penonomé":13}},{"nombre":"ROLLO REGISTRADORA 38MM","familia":"SUMINISTROS","marca":"GENERICO","stock":{"David":100,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"BOTAS CONECTOR RJ-45","familia":"REDES","marca":"TEKDATA","stock":{"David":92,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CONECTORES RJ45 CAT6 NEXXT","familia":"ACCESORIOS","marca":"NEXT","stock":{"David":90,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.T544120-AL NEGRA EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":77,"Chiriquí":17,"Santiago":9,"Penonomé":10}},{"nombre":"ROLLO 2000 ETIQUETAS TR110","familia":"SUMINISTROS","marca":"GENERICO","stock":{"David":64,"Chiriquí":0,"Santiago":2,"Penonomé":0}},{"nombre":"PAPEL XEROGRAFICO LEGAL CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":56,"Chiriquí":25,"Santiago":4,"Penonomé":10}},{"nombre":"CART.T544420-AL YELLOW EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":45,"Chiriquí":23,"Santiago":2,"Penonomé":7}},{"nombre":"CART.T748XXL120-AL NEGRO EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":45,"Chiriquí":6,"Santiago":5,"Penonomé":4}},{"nombre":"TINTA GI-16BK 4408C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":39,"Chiriquí":5,"Santiago":7,"Penonomé":4}},{"nombre":"TINTA T11B120-AL BK  EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":31,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER T06 NEGRO 3526C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":30,"Chiriquí":15,"Santiago":3,"Penonomé":4}},{"nombre":"CART.T544320-AL MAGENTA EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":30,"Chiriquí":18,"Santiago":1,"Penonomé":7}},{"nombre":"CART.T544220-AL CYAN EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":28,"Chiriquí":18,"Santiago":2,"Penonomé":4}},{"nombre":"ROLLO SUMADORA 57MM 2 1/4,100C","familia":"UTILES DE OFICINA","marca":"GENERICO","stock":{"David":27,"Chiriquí":0,"Santiago":42,"Penonomé":0}},{"nombre":"CART. 954XL BLACK (L0S71AL) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":27,"Chiriquí":4,"Santiago":0,"Penonomé":3}},{"nombre":"CART.T748XXL320-AL MAGENTA EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":26,"Chiriquí":5,"Santiago":6,"Penonomé":3}},{"nombre":"ANTIVIRUS 960-1011-99 MCAFEE","familia":"SOFTWARE","marca":"MCAFEE","stock":{"David":26,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"ROLLO DE PAPEL 76MM ORIGINAL Y COPIA","familia":"SUMINISTROS","marca":"GENERICO","stock":{"David":25,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"PROYECTOR M1X VIEWSONIC","familia":"PROYECTORES","marca":"VIEWSONIC","stock":{"David":22,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"CART.T748XXL420-AL YELLOW EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":22,"Chiriquí":4,"Santiago":4,"Penonomé":3}},{"nombre":"CART.T748XXL220-AL CYAN EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":20,"Chiriquí":5,"Santiago":5,"Penonomé":3}},{"nombre":"CINTA S015631 EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":20,"Chiriquí":2,"Santiago":0,"Penonomé":5}},{"nombre":"CART. MANTENIMIENTO L5590 C12C934461 EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":19,"Chiriquí":7,"Santiago":4,"Penonomé":5}},{"nombre":"CART.T942120-AL NEGRO EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":18,"Chiriquí":1,"Santiago":0,"Penonomé":2}},{"nombre":"CART.T941220-AL CYAN EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":18,"Chiriquí":2,"Santiago":0,"Penonomé":1}},{"nombre":"LANYARD / TIRAS METALICAS MX11(100UND) SENSORMATIC","familia":"SENSORMATIC","marca":"SENSORMATIC","stock":{"David":18,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"PAPEL SATIN 2047V145 240GSM CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":18,"Chiriquí":0,"Santiago":4,"Penonomé":0}},{"nombre":"COPIADORA IR 1643i II 5160C004AA CANON","familia":"COPIADORAS","marca":"CANON","stock":{"David":18,"Chiriquí":4,"Santiago":7,"Penonomé":0}},{"nombre":"TINTA T11A220-AL CYAN  EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":17,"Chiriquí":4,"Santiago":4,"Penonomé":0}},{"nombre":"CART.MANT. MC-G02 4589C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":15,"Chiriquí":13,"Santiago":23,"Penonomé":6}},{"nombre":"CART.MANT MC-G01 4628C0001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":15,"Chiriquí":8,"Santiago":13,"Penonomé":5}},{"nombre":"TINTA T11A320-AL MAGENTA  EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":15,"Chiriquí":4,"Santiago":4,"Penonomé":0}},{"nombre":"CART.T941320-AL MAGENTA EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":15,"Chiriquí":1,"Santiago":0,"Penonomé":1}},{"nombre":"CART.CZ106AL (662XL) TRICOLOR HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":15,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.T941420-AL YELLOW EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":15,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"KIT KCMY GT52/GT53 9F3N4AL HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":15,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 105A (W1105A) NEGRO HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":14,"Chiriquí":0,"Santiago":4,"Penonomé":3}},{"nombre":"PROTECTOR DE VOLTAJE 110V 90-140 VAC FVP-1201N FORZA","familia":"ACCESORIOS","marca":"FORZA","stock":{"David":14,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA GT52 (M0H56AL) AMARILLO HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":14,"Chiriquí":9,"Santiago":17,"Penonomé":5}},{"nombre":"CART. 954XL CYAN (L0S62AL) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":13,"Chiriquí":3,"Santiago":2,"Penonomé":1}},{"nombre":"CART. 954XL YELLOW (L0S68AL) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":13,"Chiriquí":4,"Santiago":2,"Penonomé":1}},{"nombre":"TINTA GT53 (1VV22AL) NEGRO HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":13,"Chiriquí":5,"Santiago":11,"Penonomé":4}},{"nombre":"TINTA GT52 (M0H55AL) MAGENTA HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":13,"Chiriquí":10,"Santiago":10,"Penonomé":5}},{"nombre":"TINTA T11A420-AL YELLOW  EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":13,"Chiriquí":5,"Santiago":4,"Penonomé":0}},{"nombre":"CART. 954XL MAGENTA (L0S65AL) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":12,"Chiriquí":4,"Santiago":2,"Penonomé":1}},{"nombre":"TINTA GT52 (M0H54AL) CYAN HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":12,"Chiriquí":12,"Santiago":9,"Penonomé":5}},{"nombre":"TINTA GI-11 PGBK 4525C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":12,"Chiriquí":5,"Santiago":14,"Penonomé":4}},{"nombre":"CINTA S015337 EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":12,"Chiriquí":6,"Santiago":2,"Penonomé":3}},{"nombre":"TONER T03 NEGRO 2725C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":12,"Chiriquí":10,"Santiago":0,"Penonomé":3}},{"nombre":" CART.067  NEGRO 5102C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":11,"Chiriquí":0,"Santiago":8,"Penonomé":0}},{"nombre":"MEMORIA USB 3.2 DTXON/128GB KINGSTON","familia":"ACCESORIOS","marca":"KINGSTON","stock":{"David":11,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CAMARA DOMO DS-2CD1127G2H-LIU 2.8MM HIKVISON","familia":"CAMARAS","marca":"HIKVISION","stock":{"David":10,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 151A BK W1510A HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":10,"Chiriquí":2,"Santiago":2,"Penonomé":1}},{"nombre":"CAJA ETIQUETA ZLAPXS2 SUAVE SENSORMATIC","familia":"SENSORMATIC","marca":"SENSORMATIC","stock":{"David":10,"Chiriquí":8,"Santiago":0,"Penonomé":0}},{"nombre":"CAJA REGISTRADORA FLOW PRO","familia":"CAJA REGISTRADORA","marca":"GENERICO","stock":{"David":10,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"MOUSE M190 910-005902 LOGITECH","familia":"ACCESORIOS","marca":"LOGITECH","stock":{"David":10,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER GPR-55 Y 0484C003AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":10,"Chiriquí":0,"Santiago":0,"Penonomé":1}},{"nombre":"BH-10 CH-10 COMBO KIT 3418C004AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":10,"Chiriquí":2,"Santiago":6,"Penonomé":2}},{"nombre":"NOT 15.6\" 8GB 512GB W11H D0CJ4LA#ABM HP","familia":"COMPUTADORAS","marca":"HP","stock":{"David":8,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"IMP SMART TANK 530 AIO 4SB24A HP","familia":"IMPRESORAS","marca":"HP","stock":{"David":7,"Chiriquí":2,"Santiago":4,"Penonomé":2}},{"nombre":"MOUSE M90 USB LOGITECH","familia":"ACCESORIOS","marca":"LOGITECH","stock":{"David":7,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"MOUSE M170 INALAMBRICO LOGITECH","familia":"ACCESORIOS","marca":"LOGITECH","stock":{"David":7,"Chiriquí":0,"Santiago":5,"Penonomé":3}},{"nombre":"DISCO DURO SKC600/256G KINGSTON","familia":"ACCESORIOS","marca":"KINGSTON","stock":{"David":6,"Chiriquí":3,"Santiago":3,"Penonomé":3}},{"nombre":"IMP L5590 C11CK57301 EPSON","familia":"IMPRESORAS","marca":"EPSON","stock":{"David":6,"Chiriquí":2,"Santiago":1,"Penonomé":2}},{"nombre":"MOUSE M240 SILENT BT 910-007117 LOGITECH","familia":"ACCESORIOS","marca":"LOGITECH","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"MOUSE M240 SILENT BT 910-007116 LOGITECH","familia":"ACCESORIOS","marca":"LOGITECH","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"IMP SMART TANK 580 AIO 1F3Y2A HP","familia":"IMPRESORAS","marca":"HP","stock":{"David":2,"Chiriquí":0,"Santiago":1,"Penonomé":2}},{"nombre":"IMP SMART TANK 520 1F3W2A HP","familia":"IMPRESORAS","marca":"HP","stock":{"David":2,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"IMP SMART TANK 583 4A8D7A#AKY HP","familia":"IMPRESORAS","marca":"HP","stock":{"David":1,"Chiriquí":3,"Santiago":2,"Penonomé":3}},{"nombre":"IMP WF-C5891 C11CK27301 EPSON","familia":"IMPRESORAS","marca":"EPSON","stock":{"David":5,"Chiriquí":1,"Santiago":1,"Penonomé":2}},{"nombre":"IMP MULTIFUNCIONAL ECOTANK L3250 EPSON","familia":"IMPRESORAS","marca":"EPSON","stock":{"David":4,"Chiriquí":2,"Santiago":3,"Penonomé":2}},{"nombre":"TECLADO MOUSE KIT MK220 920-004430 LOGITECH","familia":"ACCESORIOS","marca":"LOGITECH","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":1}},{"nombre":"IMP TERMICA 8CM 203PP SLK-TS100 SEWOO","familia":"IMPRESORAS","marca":"GENERICO","stock":{"David":7,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"IMPRESORA TERMICA 80MM USB Y RED SATQ22UE SAT","familia":"IMPRESORAS","marca":"GENERICO","stock":{"David":7,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CAMARA DOMO DS-2CD1127G2H-LIU 2.8MM HIKVISION","familia":"CAMARAS","marca":"HIKVISION","stock":{"David":10,"Chiriquí":0,"Santiago":0,"Penonomé":0}}];
+const BRANCHES = {
+  'David / Chiriquí': { wa: '50766168060', num: '+507 6616-8060' },
+  'Santiago':         { wa: '50764807156', num: '+507 6480-7156' },
+  'Chitré':           { wa: '50766184985', num: '+507 6618-4985' },
+  'Taller':           { wa: '50767177271', num: '+507 6717-7271' }
+};
+
+const STOCK_KEYS = {
+  'David': 'David / Chiriquí',
+  'Chiriquí': 'David / Chiriquí',
+  'Santiago': 'Santiago',
+  'Penonomé': 'Chitré'
+};
+
+const INVENTORY = [{"nombre":"ROLLO PAPEL TERMICO 80mmX70mm/DURANGO","familia":"SUMINISTROS","marca":"GENERICO","stock":{"David":1649,"Chiriquí":263,"Santiago":190,"Penonomé":98}},{"nombre":"CABLE UTP CAT6 X METRO","familia":"REDES","marca":"NEXXT","stock":{"David":509,"Chiriquí":60,"Santiago":0,"Penonomé":0}},{"nombre":"ROLLO 57MM X 50MM","familia":"SUMINISTROS","marca":"GENERICO","stock":{"David":416,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"ROLLO  57Mx37M","familia":"SUMINISTROS","marca":"GENERICO","stock":{"David":279,"Chiriquí":367,"Santiago":100,"Penonomé":0}},{"nombre":"ROLLO DE PAPEL TERMICO 80 X 60 MM","familia":"SUMINISTROS","marca":"GENERICO","stock":{"David":243,"Chiriquí":150,"Santiago":100,"Penonomé":0}},{"nombre":"PAPEL XEROGR.8.5X11;20LBS 0151V857 CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":228,"Chiriquí":51,"Santiago":13,"Penonomé":13}},{"nombre":"ROLLO REGISTRADORA 38MM","familia":"SUMINISTROS","marca":"GENERICO","stock":{"David":100,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"BOTAS CONECTOR RJ-45","familia":"REDES","marca":"TEKDATA","stock":{"David":92,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CONECTORES RJ45 CAT6 NEXXT","familia":"ACCESORIOS","marca":"NEXT","stock":{"David":90,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.T544120-AL NEGRA EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":77,"Chiriquí":17,"Santiago":9,"Penonomé":10}},{"nombre":"ROLLO 2000 ETIQUETAS TR110","familia":"SUMINISTROS","marca":"GENERICO","stock":{"David":64,"Chiriquí":0,"Santiago":2,"Penonomé":0}},{"nombre":"PAPEL XEROGRAFICO LEGAL CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":56,"Chiriquí":25,"Santiago":4,"Penonomé":10}},{"nombre":"CART.T544420-AL YELLOW EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":45,"Chiriquí":23,"Santiago":2,"Penonomé":7}},{"nombre":"CART.T748XXL120-AL NEGRO EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":45,"Chiriquí":6,"Santiago":5,"Penonomé":4}},{"nombre":"TINTA GI-16BK 4408C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":39,"Chiriquí":5,"Santiago":7,"Penonomé":4}},{"nombre":"TINTA T11B120-AL BK  EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":31,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER T06 NEGRO 3526C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":30,"Chiriquí":15,"Santiago":3,"Penonomé":4}},{"nombre":"CART.T544320-AL MAGENTA EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":30,"Chiriquí":18,"Santiago":1,"Penonomé":7}},{"nombre":"CART.T544220-AL CYAN EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":28,"Chiriquí":18,"Santiago":2,"Penonomé":4}},{"nombre":"ROLLO SUMADORA 57MM 2 1/4,100C","familia":"UTILES DE OFICINA","marca":"GENERICO","stock":{"David":27,"Chiriquí":0,"Santiago":42,"Penonomé":0}},{"nombre":"CART. 954XL BLACK (L0S71AL) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":27,"Chiriquí":4,"Santiago":0,"Penonomé":3}},{"nombre":"CART.T748XXL320-AL MAGENTA EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":26,"Chiriquí":5,"Santiago":6,"Penonomé":3}},{"nombre":"ANTIVIRUS 960-1011-99 MCAFEE","familia":"SOFTWARE","marca":"MCAFEE","stock":{"David":26,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"ROLLO DE PAPEL 76MM ORIGINAL Y COPIA","familia":"SUMINISTROS","marca":"GENERICO","stock":{"David":25,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"PROYECTOR M1X VIEWSONIC","familia":"PROYECTORES","marca":"VIEWSONIC","stock":{"David":22,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"CART.T748XXL420-AL YELLOW EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":22,"Chiriquí":4,"Santiago":4,"Penonomé":3}},{"nombre":"CART.T748XXL220-AL CYAN EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":20,"Chiriquí":5,"Santiago":5,"Penonomé":3}},{"nombre":"CINTA S015631 EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":20,"Chiriquí":2,"Santiago":0,"Penonomé":5}},{"nombre":"CART. MANTENIMIENTO L5590 C12C934461 EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":19,"Chiriquí":7,"Santiago":4,"Penonomé":5}},{"nombre":"CART.T942120-AL NEGRO EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":18,"Chiriquí":1,"Santiago":0,"Penonomé":2}},{"nombre":"CART.T941220-AL CYAN EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":18,"Chiriquí":2,"Santiago":0,"Penonomé":1}},{"nombre":"LANYARD / TIRAS METALICAS MX11(100UND) SENSORMATIC","familia":"SENSORMATIC","marca":"SENSORMATIC","stock":{"David":18,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"PAPEL SATIN 2047V145 240GSM CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":18,"Chiriquí":0,"Santiago":4,"Penonomé":0}},{"nombre":"COPIADORA IR 1643i II 5160C004AA CANON","familia":"COPIADORAS","marca":"CANON","stock":{"David":18,"Chiriquí":4,"Santiago":7,"Penonomé":0}},{"nombre":"TINTA T11A220-AL CYAN  EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":17,"Chiriquí":4,"Santiago":4,"Penonomé":0}},{"nombre":"CART.MANT. MC-G02 4589C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":15,"Chiriquí":13,"Santiago":23,"Penonomé":6}},{"nombre":"CART.MANT MC-G01 4628C0001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":15,"Chiriquí":8,"Santiago":13,"Penonomé":5}},{"nombre":"TINTA T11A320-AL MAGENTA  EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":15,"Chiriquí":4,"Santiago":4,"Penonomé":0}},{"nombre":"CART.T941320-AL MAGENTA EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":15,"Chiriquí":1,"Santiago":0,"Penonomé":1}},{"nombre":"CART.CZ106AL (662XL) TRICOLOR HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":15,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.T941420-AL YELLOW EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":15,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"KIT KCMY GT52/GT53 9F3N4AL HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":15,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 105A (W1105A) NEGRO HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":14,"Chiriquí":0,"Santiago":4,"Penonomé":3}},{"nombre":"PROTECTOR DE VOLTAJE 110V 90-140 VAC FVP-1201N FORZA","familia":"ACCESORIOS","marca":"FORZA","stock":{"David":14,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA GT52 (M0H56AL) AMARILLO HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":14,"Chiriquí":9,"Santiago":17,"Penonomé":5}},{"nombre":"CART. 954XL CYAN (L0S62AL) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":13,"Chiriquí":3,"Santiago":2,"Penonomé":1}},{"nombre":"CART. 954XL YELLOW (L0S68AL) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":13,"Chiriquí":4,"Santiago":2,"Penonomé":1}},{"nombre":"TINTA GT53 (1VV22AL) NEGRO HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":13,"Chiriquí":5,"Santiago":11,"Penonomé":4}},{"nombre":"TINTA GT52 (M0H55AL) MAGENTA HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":13,"Chiriquí":10,"Santiago":10,"Penonomé":5}},{"nombre":"TINTA T11A420-AL YELLOW  EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":13,"Chiriquí":5,"Santiago":4,"Penonomé":0}},{"nombre":"CART. 954XL MAGENTA (L0S65AL) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":12,"Chiriquí":4,"Santiago":2,"Penonomé":1}},{"nombre":"TINTA GT52 (M0H54AL) CYAN HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":12,"Chiriquí":12,"Santiago":9,"Penonomé":5}},{"nombre":"TINTA GI-11 PGBK 4525C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":12,"Chiriquí":5,"Santiago":14,"Penonomé":4}},{"nombre":"CINTA S015337 EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":12,"Chiriquí":6,"Santiago":2,"Penonomé":3}},{"nombre":"TONER T03 NEGRO 2725C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":12,"Chiriquí":10,"Santiago":0,"Penonomé":3}},{"nombre":"CART.067  NEGRO 5102C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":11,"Chiriquí":0,"Santiago":8,"Penonomé":0}},{"nombre":"MEMORIA USB 3.2 DTXON/128GB KINGSTON","familia":"ACCESORIOS","marca":"KINGSTON","stock":{"David":11,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CAMARA DOMO DS-2CD1127G2H-LIU 2.8MM HIKVISON","familia":"CAMARAS","marca":"HIKVISION","stock":{"David":10,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 151A BK W1510A HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":10,"Chiriquí":2,"Santiago":2,"Penonomé":1}},{"nombre":"CAJA ETIQUETA ZLAPXS2 SUAVE SENSORMATIC","familia":"SENSORMATIC","marca":"SENSORMATIC","stock":{"David":10,"Chiriquí":8,"Santiago":0,"Penonomé":0}},{"nombre":"CAJA REGISTRADORA FLOW PRO","familia":"CAJA REGISTRADORA","marca":"GENERICO","stock":{"David":10,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"MOUSE M190 910-005902 LOGITECH","familia":"ACCESORIOS","marca":"LOGITECH","stock":{"David":10,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER GPR-55 Y 0484C003AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":10,"Chiriquí":0,"Santiago":0,"Penonomé":1}},{"nombre":"BH-10 CH-10 COMBO KIT 3418C004AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":10,"Chiriquí":2,"Santiago":6,"Penonomé":2}},{"nombre":"PAPEL 9 1/2 X 5 1/2, 2 PARTES","familia":"UTILES DE OFICINA","marca":"GENERICO","stock":{"David":9,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CINTA S015329 EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":9,"Chiriquí":2,"Santiago":1,"Penonomé":0}},{"nombre":"TONER GPR-55 C 0482C003AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":9,"Chiriquí":0,"Santiago":0,"Penonomé":1}},{"nombre":"REGLETA 10FT PS-1006B  FORZA","familia":"ACCESORIOS","marca":"FORZA","stock":{"David":9,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"CONECTORES RJ-45 (PU) EVEREST","familia":"REDES","marca":"GENERICO","stock":{"David":8,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART. CL-146 XL COLOR 8276B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":8,"Chiriquí":0,"Santiago":2,"Penonomé":5}},{"nombre":"NOT 15.6\" 8GB 512GB W11H D0CJ4LA#ABM HP","familia":"COMPUTADORAS","marca":"HP","stock":{"David":8,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"FACE PLATE 1 POSICION","familia":"REDES","marca":"TEKDATA","stock":{"David":8,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"PATCH CORD CAT6A GRIS/AZUL NAB-PCS6A10BL NEXXT","familia":"ACCESORIOS","marca":"NEXXT","stock":{"David":8,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA GI-11 YELLOW 4536C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":8,"Chiriquí":3,"Santiago":4,"Penonomé":4}},{"nombre":"TONER GPR-55 M 0483C003AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":8,"Chiriquí":0,"Santiago":0,"Penonomé":1}},{"nombre":"CART. TONER 051H 2169C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":8,"Chiriquí":0,"Santiago":2,"Penonomé":0}},{"nombre":"CART.PFI-120MBK CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":7,"Chiriquí":1,"Santiago":5,"Penonomé":1}},{"nombre":"TINTA GI-11 CYAN 4534C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":7,"Chiriquí":2,"Santiago":4,"Penonomé":3}},{"nombre":"IMP TERMICA 8CM 203PP SLK-TS100 SEWOO","familia":"IMPRESORAS","marca":"GENERICO","stock":{"David":7,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"IMP SMART TANK 530 AIO 4SB24A HP","familia":"IMPRESORAS","marca":"HP","stock":{"David":7,"Chiriquí":2,"Santiago":4,"Penonomé":2}},{"nombre":"TONER 230A NEGRO (W2300A) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":7,"Chiriquí":0,"Santiago":0,"Penonomé":1}},{"nombre":"TONER T12 YELLOW 5095C005AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":7,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"TONER T12 BK 5098C005AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":7,"Chiriquí":2,"Santiago":0,"Penonomé":3}},{"nombre":"ECONOMY BOND PAPER 24\" X 150 3853A010AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":7,"Chiriquí":2,"Santiago":2,"Penonomé":0}},{"nombre":"TINTA GI-190 BK 0667C001AB CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":7,"Chiriquí":2,"Santiago":15,"Penonomé":4}},{"nombre":"TONER GPR-55 BK 0481C003AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":7,"Chiriquí":0,"Santiago":0,"Penonomé":1}},{"nombre":"IMPRESORA TERMICA 80MM USB Y RED SATQ22UE SAT","familia":"IMPRESORAS","marca":"GENERICO","stock":{"David":7,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CASH DRAWER RJ-12 ACCGAD GADAPOS","familia":"ACCESORIOS","marca":"GENERICO","stock":{"David":7,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CERTIFICADO DE FIRMA ELECTRONICA 2 AÑOS","familia":"SERVICIOS","marca":"GENERICO","stock":{"David":7,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"MOUSE M90 USB LOGITECH","familia":"ACCESORIOS","marca":"LOGITECH","stock":{"David":7,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"MOUSE M170 INALAMBRICO LOGITECH","familia":"ACCESORIOS","marca":"LOGITECH","stock":{"David":7,"Chiriquí":0,"Santiago":5,"Penonomé":3}},{"nombre":"DISCO DURO SKC600/256G KINGSTON","familia":"ACCESORIOS","marca":"KINGSTON","stock":{"David":6,"Chiriquí":3,"Santiago":3,"Penonomé":3}},{"nombre":"TINTA T664120-AL NEGRO  EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":6,"Chiriquí":1,"Santiago":2,"Penonomé":2}},{"nombre":"IMP L5590 C11CK57301 EPSON","familia":"IMPRESORAS","marca":"EPSON","stock":{"David":6,"Chiriquí":2,"Santiago":1,"Penonomé":2}},{"nombre":"CINTA S015335 EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":6,"Chiriquí":0,"Santiago":0,"Penonomé":1}},{"nombre":"PRELUDE 15.6 BACKPACK 1E7D6UT HP","familia":"ACCESORIOS","marca":"HP","stock":{"David":6,"Chiriquí":0,"Santiago":0,"Penonomé":2}},{"nombre":"FOLIOS ILIMITADOS FLOW PRO","familia":"ACCESORIOS","marca":"HKA","stock":{"David":6,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART. PFI-030 MBK 3488C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":6,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 057H NEGRO 3010C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":6,"Chiriquí":0,"Santiago":2,"Penonomé":2}},{"nombre":"TINTA GI-190 Y 0670C001AB CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":6,"Chiriquí":7,"Santiago":2,"Penonomé":2}},{"nombre":"TONER T10 CYAN 4565C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":6,"Chiriquí":2,"Santiago":3,"Penonomé":0}},{"nombre":"TONER T10 MAGENTA 4564C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":6,"Chiriquí":3,"Santiago":1,"Penonomé":0}},{"nombre":"CART. DE MANTE T671600 EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":6,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER GPR-36 YELLOW CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":6,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"TONER GPR-54 NEGRO 9436B003AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":6,"Chiriquí":3,"Santiago":11,"Penonomé":3}},{"nombre":"CART.938E EVOMORE 4S6Y2PL NEGRO HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":6,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"ESCANER DE CÓDIGOS DE BARRA 1D SATLD101RFPLUS SAT","familia":"LECTORES","marca":"GENERICO","stock":{"David":6,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA GI-11 MAGENTA 4535C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":6,"Chiriquí":2,"Santiago":6,"Penonomé":4}},{"nombre":"TINTA GI-16C 4418C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":6,"Chiriquí":6,"Santiago":6,"Penonomé":5}},{"nombre":"CART. PG-145 XL NEGRO 8274B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":6,"Chiriquí":2,"Santiago":2,"Penonomé":5}},{"nombre":"TONER T10 YELLOW 4563C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":6,"Chiriquí":3,"Santiago":3,"Penonomé":0}},{"nombre":"CART DE MANT MC-G04 5813C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":6,"Chiriquí":2,"Santiago":7,"Penonomé":2}},{"nombre":"TONER GPR-66 M 5755C003AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":5,"Chiriquí":0,"Santiago":0,"Penonomé":3}},{"nombre":"TONER T10 BLACK 4566C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":5,"Chiriquí":2,"Santiago":6,"Penonomé":0}},{"nombre":"TONER T12 MAGENTA 5096C005AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":5,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 125 NEGRO 3484B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":5,"Chiriquí":1,"Santiago":7,"Penonomé":3}},{"nombre":"CART PGI-2100XL Y 9282B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":5,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.067 MAGENTA 5100C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":5,"Chiriquí":0,"Santiago":2,"Penonomé":0}},{"nombre":"CART.067 CYAN 5101C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":5,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"PAPEL PP-301 GLOSSY 13X19 1432C010AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":5,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER GPR-61 Y CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":5,"Chiriquí":2,"Santiago":3,"Penonomé":1}},{"nombre":"CONTAC CLEANER SABO","familia":"ACCESORIOS","marca":"SABO","stock":{"David":5,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"RELOJ M2-LR-FP-RFID-WIFI-BK ZK-TECO","familia":"RELOJES","marca":"ZKTECO","stock":{"David":5,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER GPR-36 CYAN CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":5,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CART CL-141 XL 5202B001AB CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":5,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"PAPEL PP-301 CARTA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":5,"Chiriquí":11,"Santiago":0,"Penonomé":1}},{"nombre":"TONER T12 CYAN 5097C005AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":5,"Chiriquí":4,"Santiago":0,"Penonomé":0}},{"nombre":"CART PGI-170XL PGBK 0322C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":5,"Chiriquí":2,"Santiago":2,"Penonomé":0}},{"nombre":"CART.137 NEGRO 9435B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":5,"Chiriquí":0,"Santiago":2,"Penonomé":1}},{"nombre":"TINTA PFI-707MBK 9820B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":5,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER GPR-61 BK CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":5,"Chiriquí":0,"Santiago":2,"Penonomé":1}},{"nombre":"TONER GPR-61 C CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":5,"Chiriquí":4,"Santiago":3,"Penonomé":1}},{"nombre":"TONER GPR-61 M CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":5,"Chiriquí":4,"Santiago":3,"Penonomé":1}},{"nombre":"AP DS-WAP522-SI(O-STD) HIKVISION","familia":"REDES","marca":"HIKVISION","stock":{"David":5,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER GPR-36 MAGENTA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":5,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"IMP WF-C5891 C11CK27301 EPSON","familia":"IMPRESORAS","marca":"EPSON","stock":{"David":5,"Chiriquí":1,"Santiago":1,"Penonomé":2}},{"nombre":"CINTA C13S015339 /PLQ-20/CAJ3 EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":5,"Chiriquí":13,"Santiago":0,"Penonomé":0}},{"nombre":"USB FLASH 16GB SDCZ430-016G-G46 SANDISK","familia":"ACCESORIOS","marca":"SANDISK","stock":{"David":5,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CARTRIDGE IM600 418477 RICOH","familia":"SUMINISTROS","marca":"RICOH","stock":{"David":5,"Chiriquí":0,"Santiago":2,"Penonomé":1}},{"nombre":"TONER IM430 419078 /418126 RICOH","familia":"SUMINISTROS","marca":"RICOH","stock":{"David":5,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"VELLUM 24\"X150FT","familia":"SUMINISTROS","marca":"GENERICO","stock":{"David":4,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART. CN048AL (951XL) YELLOW  HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":4,"Chiriquí":0,"Santiago":3,"Penonomé":0}},{"nombre":"POS D4-504 IMIN","familia":"PUNTOS DE VENTA","marca":"GENERICO","stock":{"David":4,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"MONITOR 22\" BK VA2214-H VIEWSONIC","familia":"MONITORES","marca":"VIEWSONIC","stock":{"David":4,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA T673120-AL NEGRO EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":4,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"CART CZ129A (711) NEGRO HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":4,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"TINTA T974120 EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":4,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA T40W120 BK EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":4,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER GPR-36 NEGRO CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":4,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CART CLI-211 COLOR CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":4,"Chiriquí":4,"Santiago":0,"Penonomé":0}},{"nombre":"UPS 500VA BV500 APC","familia":"UPS","marca":"APC","stock":{"David":4,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"IMPRESORA GM2010 3110C004AA CANON","familia":"IMPRESORAS","marca":"CANON","stock":{"David":4,"Chiriquí":0,"Santiago":2,"Penonomé":0}},{"nombre":"CART.067 YELLOW 5099C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":4,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"TONER GPR-31 YELLOW 2802B003AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":4,"Chiriquí":0,"Santiago":2,"Penonomé":0}},{"nombre":"TONER GPR-52 CYAN 9107B003AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":4,"Chiriquí":1,"Santiago":1,"Penonomé":0}},{"nombre":"TONER GPR-57 NEGRO 0473C003AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":4,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER GPR-66 BK 5753C003AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":4,"Chiriquí":0,"Santiago":0,"Penonomé":2}},{"nombre":"TONER GPR-66 C 5754C003AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":4,"Chiriquí":0,"Santiago":0,"Penonomé":2}},{"nombre":"TONER GPR-66 Y 5756C003AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":4,"Chiriquí":0,"Santiago":0,"Penonomé":3}},{"nombre":"LIBRO FISCAL HASAR","familia":"ACCESORIOS","marca":"HASAR","stock":{"David":4,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"PAPEL GP-501 4X6(10)SATINADO CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":4,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 230A CYAN (W2301A) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":4,"Chiriquí":0,"Santiago":0,"Penonomé":1}},{"nombre":"TONER 145X (W145X) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":4,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CAJA REGISTRADORA CR6 PRO","familia":"CAJA REGISTRADORA","marca":"HKA","stock":{"David":4,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 230A MAGENTA  (W2303A) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":4,"Chiriquí":0,"Santiago":0,"Penonomé":1}},{"nombre":"PATCH CORD CAT6 30CM GR PCGPCC6CM01GR NEXXT","familia":"REDES","marca":"NEXXT","stock":{"David":4,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.CZ105AL (662XL) NEGRO HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":4,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"OFFICE 365 FAMILIAR EP2-32295TP MICROSOFT","familia":"SOFTWARE","marca":"MICROSOFT","stock":{"David":4,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA PFI-1100 C 0851C001AA 160ML CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":4,"Chiriquí":0,"Santiago":2,"Penonomé":0}},{"nombre":"TINTA PFI-1100 Y 0853C001AA 160ML CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":4,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"IMP MULTIFUNCIONAL ECOTANK L3250 EPSON","familia":"IMPRESORAS","marca":"EPSON","stock":{"David":4,"Chiriquí":2,"Santiago":3,"Penonomé":2}},{"nombre":"TONER GPR-53 MAGENTA 8526B003AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":4,"Chiriquí":1,"Santiago":2,"Penonomé":1}},{"nombre":"CART CLI-171XL GY CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":4,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER GPR-67 BK 5745C003AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":4,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"PFI-107M 6707B001AA 130ml CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":3,"Chiriquí":0,"Santiago":1,"Penonomé":1}},{"nombre":"TINTA GI-13 GY 4704C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":3,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART. MANTENIMIENTO MC-G03 5794C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":3,"Chiriquí":5,"Santiago":3,"Penonomé":2}},{"nombre":"COP IR ADV 3926 5963C002AA CANON","familia":"COPIADORAS","marca":"CANON","stock":{"David":3,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER GPR-31 CYAN 2794B003AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":3,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"TINTA PFI-1100 PGY 160ML CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":3,"Chiriquí":0,"Santiago":3,"Penonomé":0}},{"nombre":"TINTA PFI-1100MBK 0849C001AA 160ML CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":3,"Chiriquí":0,"Santiago":4,"Penonomé":0}},{"nombre":"TINTA PFI-1100 PBK 0850C001AA 160ML CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":3,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"TONER GPR-52 MAGENTA 9108B003AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":3,"Chiriquí":2,"Santiago":1,"Penonomé":2}},{"nombre":"TONER GPR-52 YELLOW 9109B003AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":3,"Chiriquí":3,"Santiago":0,"Penonomé":2}},{"nombre":"TONER 046 BK 1250C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":3,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA PFI-310 C CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":3,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 051 LBP162DW 2168C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":3,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"CART.PFI-120 YELLOW CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":3,"Chiriquí":1,"Santiago":2,"Penonomé":2}},{"nombre":"CART.PGI-7100XXL YELLOW CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":3,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART. SP3710 408284  RICOH","familia":"SUMINISTROS","marca":"RICOH","stock":{"David":3,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"PAD MOUSE XTA-526 XTECH","familia":"ACCESORIOS","marca":"XTECH","stock":{"David":3,"Chiriquí":0,"Santiago":1,"Penonomé":1}},{"nombre":"CINTA S015384  EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":3,"Chiriquí":0,"Santiago":2,"Penonomé":0}},{"nombre":"NOT 15.6\" R3 8GB 512GB W11H  82XQ00M8GJ LENOVO","familia":"COMPUTADORAS","marca":"LENOVO","stock":{"David":3,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA T664220-AL CYAN  EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":3,"Chiriquí":4,"Santiago":1,"Penonomé":2}},{"nombre":"TINTA T664320-AL MAGENTA  EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":3,"Chiriquí":5,"Santiago":1,"Penonomé":2}},{"nombre":"MOUSE PAD PMP-01M PRIMUS GAMING","familia":"ACCESORIOS","marca":"GENERICO","stock":{"David":3,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"KEYSTONE JACK CAT6 PCGKJC6TYRJGR NEXXT","familia":"ACCESORIOS","marca":"NEXXT","stock":{"David":3,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.140120-AL NEGRO EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":3,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.938E EVOMORE 4S6Y1PL YELLOW HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":3,"Chiriquí":0,"Santiago":2,"Penonomé":0}},{"nombre":"CART.667XL (3YM81AL) NEGRO HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":3,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"CART.712 3ED69A YELLOW HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":3,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CART.712 3ED70A NEGRO HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":3,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA BTD60BK BROTHER","familia":"SUMINISTROS","marca":"BROTHER","stock":{"David":3,"Chiriquí":1,"Santiago":3,"Penonomé":0}},{"nombre":"TONER 136A (W1360A) NEGRO HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":3,"Chiriquí":0,"Santiago":2,"Penonomé":0}},{"nombre":"TINTA BT5001 CYAN BROTHER","familia":"SUMINISTROS","marca":"BROTHER","stock":{"David":3,"Chiriquí":0,"Santiago":2,"Penonomé":0}},{"nombre":"TONER 150A (W1500A) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":3,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART PG-140XL 5200B001AB CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":3,"Chiriquí":0,"Santiago":0,"Penonomé":2}},{"nombre":"GAVETA DE DINERO 41.5CM BTS","familia":"ACCESORIOS","marca":"GENERICO","stock":{"David":3,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.DE MANT. T671200 EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":3,"Chiriquí":0,"Santiago":0,"Penonomé":2}},{"nombre":"TINTA T49M120 NEGRA EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":3,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA T49M320 MAGENTA EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":3,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CART.T296320-AL MAGENTA EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":3,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.T296420-AL YELLOW EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":3,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA T504120-AL NEGRO EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":3,"Chiriquí":4,"Santiago":16,"Penonomé":5}},{"nombre":"TINTA T01C200 CYAN WF-C579R EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":3,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER GPR-64 5141C003AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":3,"Chiriquí":0,"Santiago":3,"Penonomé":0}},{"nombre":"CART.CLI-65 BK 4215C004AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":3,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CART.PFI-120CYAN CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":3,"Chiriquí":1,"Santiago":2,"Penonomé":1}},{"nombre":"PAPER FEEDER PF-C1 0865C001AA CANON","familia":"COPIADORAS","marca":"CANON","stock":{"David":3,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"CART.GI-10 PGBK 3382C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":3,"Chiriquí":1,"Santiago":10,"Penonomé":3}},{"nombre":"CART.GI-10 Y 3393C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":3,"Chiriquí":5,"Santiago":5,"Penonomé":2}},{"nombre":"CART. PFI-030 Y 3492C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":3,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA T09 NEGRO 3020C005AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":3,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"TINTA GI-16M 4419C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":3,"Chiriquí":6,"Santiago":6,"Penonomé":4}},{"nombre":"TINTA GI-16Y 4420C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":3,"Chiriquí":8,"Santiago":4,"Penonomé":5}},{"nombre":"TAMBOR 051 2170C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":3,"Chiriquí":0,"Santiago":2,"Penonomé":1}},{"nombre":"TINTA BT5001 YELLOW BROTHER","familia":"SUMINISTROS","marca":"BROTHER","stock":{"David":3,"Chiriquí":0,"Santiago":2,"Penonomé":0}},{"nombre":"TONER Q2612A (12A) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":3,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.954 NEGRO L0S59AL HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":3,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER  CF230X (30X) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":3,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.667XL (3YM80AL) TRICOLOR HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":3,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"CAPACITACIÓN CONTABILIDAD ECOMMERCE CRM SWITCH","familia":"SERVICIOS","marca":"GENERICO","stock":{"David":3,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.938 4S6X8PL BLACK HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":3,"Chiriquí":1,"Santiago":5,"Penonomé":1}},{"nombre":"POS ALL IN ONE 15.6\" 4GB 8GB SSD USB  CUSTOM","familia":"PUNTOS DE VENTA","marca":"CUSTOM","stock":{"David":3,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"PROYECTOR CO-W01 V11HA86020 EPSON","familia":"PROYECTORES","marca":"EPSON","stock":{"David":3,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"MONITOR 23.8\" A24I 54387 XIAOMI","familia":"MONITORES","marca":"XAIOMI","stock":{"David":3,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 119 II NEGRO 3480B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":3,"Chiriquí":0,"Santiago":3,"Penonomé":0}},{"nombre":"SCANNER MANUAL DS200 USB TBS","familia":"ESCANERES","marca":"GENERICO","stock":{"David":3,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART PFI-102 MAGENTA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":3,"Chiriquí":2,"Santiago":9,"Penonomé":0}},{"nombre":"TONER GPR-23 CYAN CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":3,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER GPR-42 NEGRO 4791B003AB CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":3,"Chiriquí":2,"Santiago":0,"Penonomé":2}},{"nombre":"CART CLI-221 NEGRO CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":3,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA T40W220 CYAN  EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":3,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.MANT T6710/PXBMB2 EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":3,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA T49M220 CYAN EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":3,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA T49M420 YELLOW EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":3,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"IXR-YMCCK THERMAL RIBBON 3210C002AB CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":3,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA T664420-AL YELLOW  EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":3,"Chiriquí":3,"Santiago":1,"Penonomé":2}},{"nombre":"CART. T140320-AL MAGENTA EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":3,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART. T140420-AL AMARILLO EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":3,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"LECTOR CODIGO DE BARR 1D SC050 3NSTAR","familia":"LECTORES","marca":"3NSTAR","stock":{"David":3,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"USB FLASH 32GB  SDCZ430-032G-G46 SANDISK","familia":"ACCESORIOS","marca":"SANDISK","stock":{"David":3,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART. MANT. ET-4750/T04D1 EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":3,"Chiriquí":0,"Santiago":7,"Penonomé":0}},{"nombre":"RELOJ SPEEDFACE-V3L LITE  ZKTECO","familia":"RELOJES","marca":"ZKTECO","stock":{"David":3,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART. CN045AL (950XL) NEGRO HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":3,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"ADAP USB TIPO-C A VGA HEMBRA XTC-550 XTECH","familia":"ACCESORIOS","marca":"XTECH","stock":{"David":3,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"PRINT CARTRIDGE IM600H 418480 RICOH","familia":"SUMINISTROS","marca":"RICOH","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"MEMORIA USB DTX/64GB KINGSTON","familia":"ACCESORIOS","marca":"KINGSTON","stock":{"David":2,"Chiriquí":5,"Santiago":0,"Penonomé":0}},{"nombre":"SCAN BARCODE 1D SC310BT  3NSTAR","familia":"LECTORES","marca":"3NSTAR","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"PAD MOUSE 956-000038 LOGITECH","familia":"ACCESORIOS","marca":"LOGITECH","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":1}},{"nombre":"UPS 800VA BV800 APC","familia":"UPS","marca":"APC","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"APOYO ERGONOMICO PARA TECLADO EN GEL AC033 MULTILASER","familia":"ACCESORIOS","marca":"MULTILASER","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"ADAPTADOR USB 3.0- VGA VGANONUSB-3.0","familia":"ACCESORIOS","marca":"GENERICO","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"POS SWIFT 2 ANDROID 13 2GB 16GB MS2-11 IMIN","familia":"PUNTOS DE VENTA","marca":"GENERICO","stock":{"David":2,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"CABLE HDMI XTC-606 XTECH","familia":"ACCESORIOS","marca":"XTECH","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"COOLING PAD XTA-150 XTECH","familia":"ACCESORIOS","marca":"XTECH","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":1}},{"nombre":"IMP SMART TANK 520 1F3W2A HP","familia":"IMPRESORAS","marca":"HP","stock":{"David":2,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"TECLADO MOUSE KIT MK220 920-004430 LOGITECH","familia":"ACCESORIOS","marca":"LOGITECH","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":1}},{"nombre":"USB FLASH  DTXM/64GB KINGSTON","familia":"ACCESORIOS","marca":"KINGSTON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":2}},{"nombre":"TONER CF283A (83A) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":2,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"FOTOCONDUCTOR E260X22G LEXMARK","familia":"SUMINISTROS","marca":"LEXMARK","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER (78A) CE278A  HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":2,"Chiriquí":2,"Santiago":1,"Penonomé":0}},{"nombre":"HARD TAG SENSORMATIC","familia":"ACCESORIOS","marca":"SENSORMATIC","stock":{"David":2,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"IXR-YMC THERMAL RIBBON 2495C002AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"IXR-RFILM THERMAL TRANSFER FILM 3211C002AB CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA T534120-AL NEGRA EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CINTA SMH/PT-1120 FPA 43571801-F OKI","familia":"SUMINISTROS","marca":"OKI","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.MANT. T671400 EPSON","familia":"ACCESORIOS","marca":"EPSON","stock":{"David":2,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CART PFI-102 MBK 0894B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"CART CL-54 XL 9065B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"IMP TERMICA T80B 80MM 200MM BTS","familia":"IMPRESORAS","marca":"GENERICO","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER GPR-22 0386B003AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":2,"Santiago":4,"Penonomé":2}},{"nombre":"UPS 650VA  BV650 APC","familia":"UPS","marca":"APC","stock":{"David":2,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"TARJETA DE SEGUIDAD S50+TK4100 HIKVISION","familia":"ACCESORIOS","marca":"HIKVISION","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"DASH CAM AE-DC2015-B1 HIKVISION","familia":"CAMARAS","marca":"HIKVISION","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART. DE MANTENIMIENTO SC-F170  C13S210125 EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.938E EVOMORE 4S6X9PL CYAN HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":2,"Chiriquí":0,"Santiago":2,"Penonomé":0}},{"nombre":"CART.938 4S6X5PL CYAN HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":2,"Chiriquí":1,"Santiago":2,"Penonomé":1}},{"nombre":"CART. 938 4S6X6PL MAGENTA HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":2,"Chiriquí":1,"Santiago":0,"Penonomé":1}},{"nombre":"CART.938 4S6X7PL YELLOW HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":2,"Chiriquí":1,"Santiago":0,"Penonomé":1}},{"nombre":"CART.712 3ED67A CYAN HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":2,"Chiriquí":1,"Santiago":2,"Penonomé":0}},{"nombre":"TINTA T09 MAGENTA 3018C005AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"CART. PFI-030 M 3491C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"TINTAS PFI-320BK 2890C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":2,"Santiago":3,"Penonomé":2}},{"nombre":"CART. TONER 055 YELLOW 3013C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":1,"Santiago":0,"Penonomé":1}},{"nombre":"CART.PGI-7100XXL BK CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.PGI-7100XXL MAGENTA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART. MANT. MC50 CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA PFI-310 Y CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 067H BK 5106C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER GPR-58 NEGRO CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":3,"Santiago":3,"Penonomé":1}},{"nombre":"TONER 046 YELLOW 1247C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA PFI-1100 B 0859C001AA 160ML CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"TONER GPR-53 YELLOW 8527B003AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":2,"Santiago":4,"Penonomé":1}},{"nombre":"CART PGI-2100XL M 9281B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 126 CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CART. MANTENIMIENTO WF-C5890 C12C938211 EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":2,"Chiriquí":3,"Santiago":0,"Penonomé":0}},{"nombre":"CART PFI-104 MAGENTA /IPF650 CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER GPR-34 CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER GPR-31 NEGRO 2790B003AC CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":2,"Penonomé":0}},{"nombre":"TONER GPR-31 MAGENTA 2798B003AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART PGI-1100 M 9245B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.CLI-65 CYAN 4216C004AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"PFI-107MBK 6704B001AA 130ml CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA PFI-050 C 5699C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"TINTA PFI-2100 MBK 5265C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA T554 BK (T554120-AL) EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"ADAPTADOR DISPLAY PORT & HDMI","familia":"ACCESORIOS","marca":"GENERICO","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"DISPOSITIVO HSR-1000 IFP ELCOM HASAR","familia":"PUNTOS DE VENTA","marca":"HASAR","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 104 CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":5,"Santiago":2,"Penonomé":0}},{"nombre":"CART CLI-151 NEGRO CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER GPR-39 2787B003AB CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":9,"Santiago":4,"Penonomé":2}},{"nombre":"TONER GPR-16 9634A003AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"IMP. TÉRMICA USB NCR","familia":"IMPRESORAS","marca":"GENERICO","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CINTA PARA 1140 TALLY DASCOM","familia":"SUMINISTROS","marca":"DASCOM","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CAJA REGISTRADORA SMART DIP ONLINE","familia":"CAJA REGISTRADORA","marca":"GENERICO","stock":{"David":2,"Chiriquí":0,"Santiago":2,"Penonomé":0}},{"nombre":"POS ALL IN ONE 15.6 QY6/DR33 8GB 1278GB BTS","familia":"CAJA REGISTRADORA","marca":"GENERICO","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA MBK C6000/C5000 C13T44B520  EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART CLI-36 COLOR CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER GPR-48 NEGRO 2788B003AB CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":1}},{"nombre":"TONER EP-26 CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART PGI-220 NEGRO 2945B016AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART CLI-221 MAGENTA 2948B016AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"CART CLI-221 YELLOW CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"NOT 14\" CELERON 4GB 128GB  UB240ESP MULTILASER","familia":"COMPUTADORAS","marca":"MULTILASER","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"RELOJ IN05-ID ZK-TECO","familia":"RELOJES","marca":"ZKTECO","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"RELOJ M2F-PRO-LR ZK-TECO","familia":"RELOJES","marca":"ZKTECO","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"IMP SMART TANK 580 AIO 1F3Y2A HP","familia":"IMPRESORAS","marca":"HP","stock":{"David":2,"Chiriquí":0,"Santiago":1,"Penonomé":2}},{"nombre":"TONER (131A) CF210A  NEGRO HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART CN051AL (951) MAGENTA HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.938E EVOMORE 4S6Y0PL MAGENTA HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":2,"Chiriquí":0,"Santiago":3,"Penonomé":0}},{"nombre":"NOT R3 8GB 512GB W11H A1UD1LA#ABM  HP","familia":"COMPUTADORAS","marca":"HP","stock":{"David":2,"Chiriquí":1,"Santiago":1,"Penonomé":1}},{"nombre":"TONER 204A(CF510A) NEGRO HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.964XL 3JA57A NEGRO HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.204A AMARILLO HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.204A CYAN HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.204A MAGENTA HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.904XL NEGRO (T6M16AL) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 201A NEGRO (CF400A) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.904XL CYAN (T6M04AL) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.904XL MAGENTA (T6M08AL) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"POS SMART CASH D1","familia":"PUNTOS DE VENTA","marca":"GENERICO","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"ENCLOSURE 3588US3 3.0 3.5\" ORICO","familia":"ACCESORIOS","marca":"GENERICO","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CABLE DISPLAY PORT(M) - DISPLAY PORT (M)1.8 M XTC-354 XTECH","familia":"ACCESORIOS","marca":"XTECH","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TRANSFORMADOR SENSORMATIC","familia":"ACCESORIOS","marca":"SENSORMATIC","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"POS IMIN-1-10-1S  D3-504 ANDROID","familia":"PUNTOS DE VENTA","marca":"GENERICO","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART. CC643WL (60) COLOR HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":2,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"REGULADOR FVR-1011 FORZA","familia":"REGULADOR DE VOLTAGE","marca":"FORZA","stock":{"David":2,"Chiriquí":0,"Santiago":2,"Penonomé":2}},{"nombre":"PRINT CARTRIDGE MP6054 842126  RICOH","familia":"SUMINISTROS","marca":"RICOH","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER T08 NEGRO 3010C005AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":3,"Santiago":4,"Penonomé":0}},{"nombre":"TINTA T09 YELLOW 3017C005AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":1,"Santiago":2,"Penonomé":0}},{"nombre":"TINTA T09 CYAN 3019C005AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":1,"Santiago":1,"Penonomé":1}},{"nombre":"CART.CLI-65 MAGENTA 4217C004AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CART. PFI-030 BK 3489C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":2,"Santiago":1,"Penonomé":0}},{"nombre":"CART. PFI-030 C 3490C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"CART.PGI-7100XXL CYAN CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.PFI-120 MAGENTA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":2,"Santiago":1,"Penonomé":2}},{"nombre":"CART. TONER 055 BK 3016C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":1,"Santiago":0,"Penonomé":1}},{"nombre":"CART.GI-10 M 3392C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":3,"Santiago":7,"Penonomé":2}},{"nombre":"TINTA PFI-310 M CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 045H BK 1246C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER GPR-58 CYAN CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":1,"Santiago":1,"Penonomé":1}},{"nombre":"TONER GPR-58 MAGENTA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":2,"Santiago":1,"Penonomé":1}},{"nombre":"TONER GPR-58 YELLOW CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":3,"Santiago":1,"Penonomé":1}},{"nombre":"TONER GPR-53 CYAN 8525B003AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":2,"Santiago":3,"Penonomé":1}},{"nombre":"DOUBLE MATTE FILM 36\"X125\" 160GSM CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART PGI-1100XL BK 9187B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART PGI-1100XL C CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER PTO436A PRINTON","familia":"SUMINISTROS","marca":"PRINTON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART PGI-2100XL BK 9259B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA PFI-3100 PBK 6422C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"IMP MF1333C 5455C003AA  CANON","familia":"IMPRESORAS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"PFI-107Y 6708B001AA 130ml CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":2,"Penonomé":0}},{"nombre":"COPIADORA IR-ADV 529IF 5848C002AA CANON","familia":"COPIADORAS","marca":"CANON","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":1}},{"nombre":"964XL CYAN  3JA54AL  HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":2,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CAMARA PSV10 5947C002AA CANON","familia":"CAMARAS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"TONER 58X CF258X  HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"964XL MAGENTA  3JA55AL  HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"FUNDA 15.6\"  KNS-220BL  KLIP XTREME","familia":"ACCESORIOS","marca":"KLIP XTREME","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"GABINETE 7PIES 24X24 47Rms ABANICO TEKDATA","familia":"REDES","marca":"TEKDATA","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CAJILLA  2X4 MODULAR","familia":"REDES","marca":"TEKDATA","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"PAPER FEEDER PF-D1 0942C001AA CANON","familia":"COPIADORAS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"IMP MF465DW 110-127V US 5951C005AA CANON","familia":"IMPRESORAS","marca":"CANON","stock":{"David":1,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA GI-13 M  4669C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER PTO103 COMPATIBLE CANON","familia":"SUMINISTROS","marca":"GENERICO","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER T07 BK  3641C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"PFI-107C 6706B001AA 130ml CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":1,"Penonomé":1}},{"nombre":"TINTA PFI-050 M 5700C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"TINTA PFI-050 Y 5701C001AA  CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"IMP IMAGECLASS MF289DW 6354C005 CANON","familia":"IMPRESORAS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CABINET TYPE-P 5858A009BA CANON","familia":"IMPRESORAS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA PFI-3100 R 6427C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA PFI-3100 B 6428C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA PFI-3100 PC  6429C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA PFI-3100 PGY 6431C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA PFI-3100 CO 6432C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA PFI-1300 B 0820C001AA  CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 075H M 6367C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 075H Y 6366C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART PGI-2100XL C 9280B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"UPS BX1000L-LM60 APC","familia":"REGULADOR DE VOLTAGE","marca":"APC","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART PGI-170 PGBK CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER GPR-53 BLACK 8524B003AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":1,"Santiago":2,"Penonomé":1}},{"nombre":"CART PFI-206 M 5305B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER GPR-35 CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART PGI-1100XL Y CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 116 YELLOW CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"PAPEL DOUBLE MATTE FILM 0834V799 24\" x 125' CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER GPR-37 3764B003AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":2,"Penonomé":0}},{"nombre":"TINTA PFI-1100 R 0858C001AA 160ML CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA PFI-1100 M 160ML CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":3,"Penonomé":0}},{"nombre":"TONER 045H CYAN 1245C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":1}},{"nombre":"TONER 045H YELLOW 1243C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":1}},{"nombre":"TONER 046 MAGENTA 1248C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 046 H MAGENTA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":3,"Santiago":0,"Penonomé":0}},{"nombre":"CART.PFI-120BK CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":1,"Santiago":1,"Penonomé":2}},{"nombre":"CASSETTE UNIT-AH1 CANON","familia":"ACCESORIOS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 067H Y 5103C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART. 052 NEGRO 2199C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 045 MAGENTA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 045 YELLOW CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"IR 1643IF 5160C003AA CANON","familia":"COPIADORAS","marca":"CANON","stock":{"David":1,"Chiriquí":1,"Santiago":2,"Penonomé":0}},{"nombre":"CART. MANT. MC-31 CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CONTROL SANKEY","familia":"ACCESORIOS","marca":"SANKEY","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA PFI-031 M 6265C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTAS PFI-320C 2891C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"TINTAS PFI-320Y 2893C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"TONER GPR-55 M L/0487C003AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 055H CYAN 3019C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 055H YELLOW 3017C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CART.CLI-65 YELLOW 4218C004AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.CLI-65 GY 4219C004AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CART.CLI-65 PC 4220C004AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.CLI-65 LGY 4222C004AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA PFI-300 MBK CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"PAPEL SATIN 1429V469CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER T01 CYAN 8067B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"IMP IM430F (120V) 418490 RICOH","familia":"COPIADORAS","marca":"RICOH","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"PRINT CARTRIDGE IM C6000 BK 842438E RICOH","familia":"SUMINISTROS","marca":"RICOH","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"PRINT CARTRIDGE IM C6000 YELLOW 842439E RICOH","familia":"SUMINISTROS","marca":"RICOH","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART PGI-72MBK CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"FUNDA SLEEVE KNS-220PK 15.6\" KLIP XTREME","familia":"ACCESORIOS","marca":"KLIP XTREME","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"GABINETE TIPO A5 1673/30 RICOH","familia":"COPIADORAS","marca":"RICOH","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"PRINT CARTRIDGE 842592 2510/2010 YELLOW RICOH","familia":"SUMINISTROS","marca":"RICOH","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"PRIPORT MASTER JP-10S 893023C RICOH","familia":"SUMINISTROS","marca":"RICOH","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CABLE DE SEGURIDAD XTA-111 XTECH","familia":"ACCESORIOS","marca":"XTECH","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"ADAP USB TIPO-C A MACHO DISPLAY PORT XTC-555 XTECH","familia":"ACCESORIOS","marca":"XTECH","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"MEMORIA 4GB KINGSTON","familia":"ACCESORIOS","marca":"KINGSTON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"PAD MOUSE 956-000037 LOGITECH","familia":"ACCESORIOS","marca":"LOGITECH","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":1}},{"nombre":"DISCO DURO 1TB 2.5\" ST1000LM048 SEAGATE","familia":"ACCESORIOS","marca":"SEAGATE","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"VELLUM 36\"X150FT","familia":"SUMINISTROS","marca":"GENERICO","stock":{"David":1,"Chiriquí":3,"Santiago":1,"Penonomé":0}},{"nombre":"TINTA T41W CYAN  (T41W220) EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA T41W YELLOW (T41W420) EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA T41W BK  (T41W520) EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA T41P CYAN (T41PW220) EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":1,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"DISCO DURO SSD 480GB SA400S37/480G KINGSTON","familia":"ACCESORIOS","marca":"KINGSTON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"MOCHILA15.6\" KNB-467RD KLIP XTREME","familia":"ACCESORIOS","marca":"KLIP XTREME","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"RECL. DE 6 SALIDAS FORZA","familia":"ACCESORIOS","marca":"FORZA","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART. CN046AL (951XL) CYAN  HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":3,"Penonomé":0}},{"nombre":"DDR3 1600MHZ 4GB KVR16LN11/4WP KINGSTON","familia":"ACCESORIOS","marca":"KINGSTON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"BATERIA FUB-127012V 7A FORZA","familia":"ACCESORIOS","marca":"FORZA","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"EXTENSOR DE RANGO WIFI5 RE450 TP-LINK","familia":"REDES","marca":"TP-LINK","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"UPS MINI DC DS-UPS18D-Z HIKVISION","familia":"UPS","marca":"HIKVISION","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"SOPORTE PARA MONITOR  KTM-876 KLIP XTREME","familia":"ACCESORIOS","marca":"KLIP XTREME","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"KIT CAMARA NVS+WIRELLES 1EXT 4MP NKS424W02H HIKVISION","familia":"CAMARAS","marca":"HIKVISION","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CINTA TZE-631 BLACK ON YELLOW BROTHER","familia":"SUMINISTROS","marca":"BROTHER","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"BOCINA 8\"  KLS-652 KLIP XTREME","familia":"ACCESORIOS","marca":"KLIP XTREME","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"MOCHILA 15.6\" BK KNB-456BK KLIP XTREME","familia":"ACCESORIOS","marca":"KLIP XTREME","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"EARPHONES EN OREJA USBC 310C JBLT310CWHTAM JBL","familia":"ACCESORIOS","marca":"JBL","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"EARPHONES EN OREJA USBC 310C JBLT310CBLUAM JBL","familia":"ACCESORIOS","marca":"JBL","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"POWER BANK 70WATT BPB021fqBK BELKIN","familia":"ACCESORIOS","marca":"GENERICO","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"ROUTER ARCHER AX12 V1 TP-LINK","familia":"REDES","marca":"TP-LINK","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"MOUSE M240 SILENT BT 910-007117 LOGITECH","familia":"ACCESORIOS","marca":"LOGITECH","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"MOUSE M240 SILENT BT 910-007116 LOGITECH","familia":"ACCESORIOS","marca":"LOGITECH","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"ROUTER TL-WR850N - TP-LINK","familia":"REDES","marca":"TP-LINK","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART. CZ116AL (670)  AMARILLA  HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART C4836A (11)  CYAN  HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER CF280A (80A) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"SWITCH HW L2 S3710-H 24 PUERTOS POE HUAWEI + SOFT BASIC + HW POWER CABLE","familia":"REDES","marca":"HUAWEI","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"NVR 32 CANALES STANDALONE DS-7732NXI-K4 HIKVISION","familia":"REDES","marca":"HIKVISION","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"DISCO DURO WD85PURZ 8TB WESTERN DIGITAL","familia":"ACCESORIOS","marca":"WESTERN DIGITAL","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 212A BK W2120A HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.CN054AL (933XL) CYAN HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"MOBILE POS GO MINI IMIN","familia":"PUNTOS DE VENTA","marca":"GENERICO","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER CE285AD (DUALPACK) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 118 CYAN 2661B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 118 MAGENTA 2660B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 118 YELLOW 2659B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART CH564HL (122XL) TRICOLOR HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":11,"Santiago":0,"Penonomé":0}},{"nombre":"CART CZ131A (711) MAGENTA HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART CZ130A (711) CYAN HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART CZ132A (711) YELLOW HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.904XL YELLOW (T6M12AL) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER CB435A (35A) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"IMP WF-C5810 C11CK24301 EPSON","familia":"IMPRESORAS","marca":"EPSON","stock":{"David":1,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CAJA REGISTRADORA FLOW PRO MINI","familia":"CAJA REGISTRADORA","marca":"HKA","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.728 300ML AMARILLO F9K15A HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART. 508X (CF362X) AMARILLO HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.664 TRICOLOR (F6V28AL) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CART. 664 XL NEGRO (F6V31AL) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":1,"Santiago":2,"Penonomé":0}},{"nombre":"SWITCH 5 PORT GIGABIT TL-SG1005D TP-LINK","familia":"REDES","marca":"TP-LINK","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 206A MAGENTA (W2113A) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"PLOTTER T250 5HB06A HP","familia":"IMPRESORAS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 206X NEGRO (W2110X) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 206X MAGENTA (W2113X) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER CB436A (36A)  HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA BT6001 BK BROTHER","familia":"SUMINISTROS","marca":"BROTHER","stock":{"David":1,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 154A BK (W1540A) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 202A YELLOW (CF502A) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 202A MAGENTA (CF503A) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.LC-3019M BROTHER","familia":"SUMINISTROS","marca":"BROTHER","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER TN439 BK BROTHER","familia":"SUMINISTROS","marca":"BROTHER","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER TN439 YELLOW  BROTHER","familia":"SUMINISTROS","marca":"BROTHER","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER TN439 MAGENTA  BROTHER","familia":"SUMINISTROS","marca":"BROTHER","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER TN439 CYAN  BROTHER","familia":"SUMINISTROS","marca":"BROTHER","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 83X (CF283X) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"UPS DS-UPS3000-X(O-STD)/US HIKVISION","familia":"UPS","marca":"HIKVISION","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 17A (CF217A) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":1,"Santiago":0,"Penonomé":1}},{"nombre":"CART. 712 3ED71A NEGRO HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"TECLADO 920-011785 LOGITECH","familia":"ACCESORIOS","marca":"LOGITECH","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 230A YELLOW (W2302A) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":1}},{"nombre":"IMP ETIQUETAS TÉRMICA LTT334 3NSTAR","familia":"IMPRESORAS","marca":"3NSTAR","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 131X BK (CF210X) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER GPR-23 YELLOW 0455B003AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER GPR-23 MAGENTA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART PG-210 NEGRO 2974B017AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"CART CL-211 XL COLOR 2975B017AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":1}},{"nombre":"CART CL-54 CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"BATERIA MR90Y DELL","familia":"ACCESORIOS","marca":"DELL","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"ADAPTADOR PA5192U-1ACA TOSHIBA","familia":"ACCESORIOS","marca":"TOSHIBA","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA PFI-300 M 4195C004AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA PFI-300 PC 4197C004AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA PFI-300 R 4199C004AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA PFI-300CO 4201C004AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA CLI-181 XL M 2030C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART. PGI-150 XL PGBK 6435B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"IMP MF1538C  4930C001AB CANON","familia":"IMPRESORAS","marca":"CANON","stock":{"David":1,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA CYAN  C6000/C5000 C13T44B220  EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA YELLOW  C6000/C5000 C13T44B420  EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART CLI-126 NEGRO 4561B001AB CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART CLI-126 MAGENTA 4563B001AB CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART CLI-126 GRAY 4565B001AB CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"POS MACHINE 13, 58MM TOUCH IMPR BTS","familia":"CAJA REGISTRADORA","marca":"GENERICO","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"LIBRO LISCAL ACLAS","familia":"RADIO","marca":"ACLAS","stock":{"David":1,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"TPV 15.6\" HIOPOS","familia":"MONITORES","marca":"HIOPOS","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART PFI-207 C 8790B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART PFI-207 M 8791B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART PFI-207 Y 8792B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.128 3500B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":2,"Santiago":0,"Penonomé":1}},{"nombre":"ADAPTADOR HAND PUNCH 3000","familia":"RELOJES","marca":"HAND PUNCH","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"COMBO TECLADO RATON MK270 LOGITECH","familia":"ACCESORIOS","marca":"LOGITECH","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CENTRO DE FACTURACION ELECTRONICA","familia":"SERVICIOS","marca":"GENERICO","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"POS 8 HKA","familia":"CAJA REGISTRADORA","marca":"HKA","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA T01C100 NEGRO WF-C579R EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA T555 CYAN (T555220-AL) EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":1,"Chiriquí":0,"Santiago":3,"Penonomé":0}},{"nombre":"TINTA T504320-AL MAGENTA EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":1,"Chiriquí":6,"Santiago":6,"Penonomé":5}},{"nombre":"TONER 89A CF289A NEGRO HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA T01D120 WF-C579R BLACK EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA T08K220 CYAN WF-400 EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA T08K320 MAGENTA WF-400 EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA T08K420 YELLOW WF-400 EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA T13K MAGENTA (T13K300)  EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA T13K YELLOW (T13K400)  EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"IMP SURECOLOR T3170M EPSON","familia":"IMPRESORAS","marca":"EPSON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA PFI-3100C 6423C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA PFI-3100 M 6424C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA PFI-3100 Y 6425C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA PFI-3100 GY 6426C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA PFI-3100 PM  6430C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"HEAVYWEIGHT MATTE COATED PAPER 0849V342 CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"964XL YELLOW  3JA56AL  HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"IMP TS3610 6670C004AA CANON","familia":"IMPRESORAS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":2,"Penonomé":2}},{"nombre":"TONER 075H BK 6369C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 075H C 6368C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"MATTE COATED PAPER 90GSM/24\" 0849V354 CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CARTRIDGE 070 5639C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"PAPEL SATIN 24X100 2047V135 CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER T04 M 2978C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"IMP imageCLASS X LBP1238 II 5162C001AA CANON","familia":"IMPRESORAS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA GI-13 CYAN 4668C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA GI-13 Y4686C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA GI-13 R 4713C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA GI-13 BK 4695C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART. PGI-180XL PGBK  2020C001AAA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART. CLI-181XL BK  2032C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART. MANT MC-32 1156C009AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"UPS 425VA 255 VATIOS BE425M APC","familia":"UPS","marca":"APC","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"IMP. SMART TANK 790 AIO 4WF66A HP","familia":"IMPRESORAS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"LECTOR CÓDIGO DE BARRAS 1D SCI150 3NSTAR","familia":"LECTORES","marca":"3NSTAR","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"RIBBON YMCKO ZC100/ZC300 ZEBRA","familia":"SUMINISTROS","marca":"ZEBRA","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CORTADORA AW250NXT09 NEXXT","familia":"REDES","marca":"NEXT","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER T07 CYAN 3642C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER T07 MAGENTA 3643C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER T07 YELLOW 3644C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"GI-16 BK C M Y+ PH-S MAXI KIT  4659C005AA  CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":3,"Penonomé":0}},{"nombre":"CART.CLI-65 PM 4221C004AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER T01 NEGRO 8066B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER T01 MAGENTA 8068B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER T01 YELLOW 8069B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART PGI-1100XL M CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART CLI-171 GY CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART PGI-1100 BK 9223B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART CLI-171 BK CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":3,"Penonomé":0}},{"nombre":"CART PFI-206 R 5309B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART PFI-206 G 5310B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA PFI-1100 PC 0854C001AA 160ML CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"TINTA PFI-1100 PM 0855C001AA 160ML CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"CART CLI-171XL C CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":1,"Santiago":4,"Penonomé":0}},{"nombre":"CART CLI-171XL Y CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":1,"Santiago":1,"Penonomé":0}},{"nombre":"TINTA PFI-1100 CO 160ML CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"TONER 046 CYAN 1249C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CART. 052 H NEGRO 2200C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"TONER 067H C 5105C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 067H M 5104C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 046 H CYAN CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":6,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 046 H YELLOW CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":5,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 045 CYAN 1241C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 045H MAGENTA 1244C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":1}},{"nombre":"CART. TONER 055 CYAN 3015C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":1,"Santiago":1,"Penonomé":1}},{"nombre":"CART. TONER 055 MAGENTA 3014C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":1,"Santiago":0,"Penonomé":1}},{"nombre":"CABINET TYPE S 5858A010AA CANON","familia":"ACCESORIOS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"TONER 055H NEGRO 3020C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 055H MAGENTA 3018C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA PFI-310 BK CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 057 NEGRO 3009C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":1,"Penonomé":1}},{"nombre":"TINTAS PFI-320M 2892C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"IMP GX7010 4471C004AA CANON","familia":"IMPRESORAS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"ROLLO PAPEL 24\"X150 3873V022 CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 202A CYAN (CF501A) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.954 MAGENTA L0S53AL HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"MEMORIA 8GB 1RX8 PC4-2400T 862974-B21  HP","familia":"ACCESORIOS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TAMBOR CF219A (19A) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 212A Y W2122A HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 206X YELLOW (W2112X) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER CB436AD (DUO) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"IMP SMART TANK 583 4A8D7A#AKY HP","familia":"IMPRESORAS","marca":"HP","stock":{"David":1,"Chiriquí":3,"Santiago":2,"Penonomé":3}},{"nombre":"NOT ELITEBOOK 14\"  R5 16GB 512   8P3T1LS#ABM HP","familia":"COMPUTADORAS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"AIR DUSTER SABO 590ML SABO","familia":"ACCESORIOS","marca":"SABO","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"RELOJ CA-ZK-K40 ZKTECO","familia":"RELOJES","marca":"ZKTECO","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"RELOJ CA-ZK-TE10 ZKTECO","familia":"RELOJES","marca":"ZKTECO","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART. 508X (CF360X) NEGRO HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART. 508X (CF361X) CYAN HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART. 508X (CF363X) MAGENTA HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 202A (CF500A) NEGRO HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 26X (CF226X) NEGRO HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 974A YELOW L0R93AL HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"NOT VICTUS 15.6\" I5 W11H 512GB RTX3050 BA1U5LA#ABM HP","familia":"COMPUTADORAS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"NOT 15.6\" R5 8GB 512GB SSD BM7K6LA#ABM  HP","familia":"COMPUTADORAS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"ALL IN ONE 23.8\" R3  512GB UMA GRAPHICS W11H BP2E4LA#ABM  HP","familia":"COMPUTADORAS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.728 300ML MAGENTA F9K16A HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TAB 8\" ANDROID12 M8 4TH GEN ZABU0151PA LENOVO","familia":"TABLET","marca":"LENOVO","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"HEADSET KSH-290 KLIP XTREME","familia":"ACCESORIOS","marca":"KLIP XTREME","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"EXTENSOR DE RANGO WIFI U6-EXTENDER-US UBIQUITI","familia":"ACCESORIOS","marca":"UBIQUITI","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"RELOJ SPEEDFACE-V5L-ID-WIFI ZK-TECO","familia":"RELOJES","marca":"ZKTECO","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"NOT R5 W11P 512GB 16GB  15.6\" A59GVLA HP","familia":"COMPUTADORAS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TARJETA DE VIDEO PCI EXPRESS 2GD3 824142126905 MSI","familia":"ACCESORIOS","marca":"MSI","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"KIT MOUSE Y TECLADO USB 920-004428 LOGITECH","familia":"ACCESORIOS","marca":"LOGITECH","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"PATCH CORD CAT6 10FT BL 798302030688 NEXXT","familia":"REDES","marca":"NEXXT","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"FOLIO TABLET 9\" 10\"  920-008334 LOGITECH","familia":"ACCESORIOS","marca":"LOGITECH","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER X25 CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA MAGENTA  C6000/C5000 C13T44B320  EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART. MANT.  C6000/C5000 C33S021501  EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART PGI-125 NEGRA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART CLI-126 CYAN 4562B001AB CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART CLI-126 YELLOW 4564B001AB CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"IMPR.PORTATIL CR2050 ACLAS","familia":"IMPRESORAS","marca":"ACLAS","stock":{"David":1,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CART PG-44 XL CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":1}},{"nombre":"CART PFI-102 YELLOW CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"CART PG-210 XL NEGRO 2973B017AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":2,"Penonomé":1}},{"nombre":"TONER GPR-33 CYAN CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER GPR-33 MAGENTA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"TONER GPR-15 9629A003AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"TONER GPR-33 YELLOW CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART PGI-150PGBK 6500B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART PFI-102BK CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":2,"Santiago":1,"Penonomé":0}},{"nombre":"CART PFI-102 CYAN CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"CARTUCHO MANTENIMIENTO MC-10 CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"CART CLI-221 CYAN CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA CLI-181 XL C 2029C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA CLI-181 XL Y 2031C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART PG-40 CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CINTA 44173403 MICROLINE 620 MICROLINE 690 OKI","familia":"SUMINISTROS","marca":"OKI","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA PFI-300 C 4194C004AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA PFI-300 Y 4196C004AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA PFI-300 PM 4198C004AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART. CLI-151 XL CYAN 6478B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CART. CLI-151 XL GRAY CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":1,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"CART. MANTENIMIENTO T699700 (T5470M) EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA T504220-AL CYAN EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":1,"Chiriquí":5,"Santiago":8,"Penonomé":5}},{"nombre":"TINTA T555520-AL GY EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA T40W320 MAGENTA  EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"IMPR L14150 AIO EPSON","familia":"IMPRESORAS","marca":"EPSON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA T13K CYAN (T13K200)  EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA T08K120 BK WF-400 EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"IMPRESORA FISCAL PORTATIL ELCOM","familia":"IMPRESORAS","marca":"HASAR","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA T555 BK (T555120-AL) EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":1,"Chiriquí":0,"Santiago":3,"Penonomé":0}},{"nombre":"TINTA T555 MAGENTA (T555320-AL) EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":1,"Chiriquí":0,"Santiago":3,"Penonomé":0}},{"nombre":"TINTA T555 YELLOW (T555420-AL) EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":1,"Chiriquí":0,"Santiago":3,"Penonomé":0}},{"nombre":"TONER 212A C W2121A HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 45862827 NEGRO OKI","familia":"SUMINISTROS","marca":"OKI","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART CZ133A (711) NEGRO HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.CN056AL (933XL) YELLOW HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART T073220 CYAN EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 212A M W2123A HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART.935XL CYAN (C2P24AL) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"SSD 2TB M.2 NVME WDS200T3G0C  WESTERN DIGITAL","familia":"ACCESORIOS","marca":"WESTERN DIGITAL","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"MOCHILA 17\" GROOVE BK  CVR617LP  TARGUS","familia":"ACCESORIOS","marca":"TARGUS","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"MOUSE ALAMBRICO RETRACTIL AMU75US TARGUS","familia":"ACCESORIOS","marca":"TARGUS","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 151X BK (W1510X) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"REGLETA 6 TOMAS AC 110/220V FSP-651W  FORZA","familia":"ACCESORIOS","marca":"FORZA","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"PROTECTOR C SOBRETENSIONES DE PARED FWT-631USBC FORZA","familia":"ACCESORIOS","marca":"FORZA","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TECLADO KB216 8NYJV DELL","familia":"ACCESORIOS","marca":"DELL","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CARGADOR 50WATT WCH019dqWH BELKIN","familia":"ACCESORIOS","marca":"GENERICO","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"ESSENTIAL FIXED WALL 600X6 NEC-F12U66B   NEXXT","familia":"ACCESORIOS","marca":"NEXXT","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CART. CZ115AL (670) MAGENTA HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TAMBOR CE314A (126A) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"ROLLO DE PAPEL ALBANENE CONO 3\" 36 X150 PIES","familia":"SUMINISTROS","marca":"GENERICO","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"ADAPTADOR DC12V-2A TIPO DESKTOP","familia":"ACCESORIOS","marca":"GENERICO","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"BALUN BL-F1PS-HD PASIVO HD DE TORNILLO","familia":"ACCESORIOS","marca":"GENERICO","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"DESACTIVADOR POWER PAD PRO SENSORMATIC","familia":"SENSORMATIC","marca":"SENSORMATIC","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TABLETA 12.77\" 3K 8GB 256GB ZAE40155PA LENOVO","familia":"TABLET","marca":"LENOVO","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TELEFONO INALAMBRICO AT3102 UNIDEN","familia":"TELEFONOS","marca":"GENERICO","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"RELOJ SENSEFACE-4A ZKTECO","familia":"RELOJES","marca":"ZKTECO","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"FUNDA SQUAREPRO KNS-420BR 15.6\" KLIP XTREME","familia":"ACCESORIOS","marca":"KLIP XTREME","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"FUNDA KNS-220KH KLIP XTREME","familia":"ACCESORIOS","marca":"KLIP XTREME","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA T41W MAGENTA (T41W320) EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA T41P MAGENTA  (T41PW320) EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA T41P YELLOW (T41PW420) EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CABLE HDMI A HDMI 25 PIESXTC-425 XTECH","familia":"ACCESORIOS","marca":"XTECH","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"IMP MULTIFUNCIONAL SMART TANK 750 HP","familia":"IMPRESORAS","marca":"HP","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":2}},{"nombre":"POWERPAD PRO SENSORMATIC","familia":"SENSORMATIC","marca":"SENSORMATIC","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"SOPORTE TELESCÓPICO 360° NULAXY","familia":"ACCESORIOS","marca":"GENERICO","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CINTA  KX-P170 PANASONIC","familia":"SUMINISTROS","marca":"PANASONIC","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"KEYPAD NUM WIRELESS KNP-110 KLIP XTREME","familia":"ACCESORIOS","marca":"KLIP XTREME","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"PAPER FEED UNIT PB1120 417081 RICOH","familia":"ACCESORIOS","marca":"RICOH","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"TONER MP501 MP601 407823 RICOH","familia":"SUMINISTROS","marca":"RICOH","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"OFFICE HOME AND BUSINESS 2024 EP2-06608 MICROSOFT","familia":"SOFTWARE","marca":"MICROSOFT","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"PAD MOUSE XTA-530 XTECH","familia":"ACCESORIOS","marca":"XTECH","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"MOCHILA KNB-467GN KLIP XTREME","familia":"ACCESORIOS","marca":"KLIP XTREME","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"MALETIN 15.6 KLB-461BG KLIP XTREME","familia":"ACCESORIOS","marca":"KLIP XTREME","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"CASE CPU FUENTE 600WW XTQ-100 XTECH","familia":"ACCESORIOS","marca":"XTECH","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"FOTOCONDUCTOR 56F0Z00 LEXMARK","familia":"SUMINISTROS","marca":"LEXMARK","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"IM C2010 418339 RICOH","familia":"COPIADORAS","marca":"RICOH","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"PRINT CARTRIDGE 842591 2510/2010 BK RICOH","familia":"SUMINISTROS","marca":"RICOH","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"PRINT CARTRIDGE 842594 2510/2010 MAGENTA RICOH","familia":"SUMINISTROS","marca":"RICOH","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"PRINT CARTRIDGE IM C6000 MAGENTA 842440E RICOH","familia":"SUMINISTROS","marca":"RICOH","stock":{"David":1,"Chiriquí":0,"Santiago":0,"Penonomé":0}},{"nombre":"PAD MOUSE XTA-200 XTECH","familia":"ACCESORIOS","marca":"XTECH","stock":{"David":0,"Chiriquí":0,"Santiago":2,"Penonomé":0}},{"nombre":"REGULADOR FVP-4402B 4400W FORZA","familia":"REGULADOR DE VOLTAGE","marca":"FORZA","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"CABLE USB 3.04M XTC-303 XTECH","familia":"ACCESORIOS","marca":"XTECH","stock":{"David":0,"Chiriquí":0,"Santiago":2,"Penonomé":0}},{"nombre":"PAPER FEED UNIT PB1160 418475 RICOH","familia":"COPIADORAS","marca":"RICOH","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"REGULADOR FVP-1201B FORZA","familia":"REGULADOR DE VOLTAGE","marca":"FORZA","stock":{"David":0,"Chiriquí":3,"Santiago":0,"Penonomé":0}},{"nombre":"CAJA 1000 TACHUELA MJ200-G SENSORMATIC","familia":"SENSORMATIC","marca":"SENSORMATIC","stock":{"David":0,"Chiriquí":0,"Santiago":10,"Penonomé":0}},{"nombre":"CART. CN047AL (951XL) MAGENTA HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"ANTIVIRUS INTERNET SECURITY KASPERSKY","familia":"SOFTWARE","marca":"KASPERSKY","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"UPS 750VA FORZA","familia":"UPS","marca":"FORZA","stock":{"David":0,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"CARGADOR PORTATIL BPB012BPBK BELKIN","familia":"ACCESORIOS","marca":"GENERICO","stock":{"David":0,"Chiriquí":0,"Santiago":2,"Penonomé":0}},{"nombre":"MEMORIA 16GB USB SANDISK","familia":"ACCESORIOS","marca":"SANDISK","stock":{"David":0,"Chiriquí":0,"Santiago":2,"Penonomé":0}},{"nombre":"MEMORIA ULTRA DUAL USB 64GB SANDISK","familia":"ACCESORIOS","marca":"SANDISK","stock":{"David":0,"Chiriquí":0,"Santiago":4,"Penonomé":0}},{"nombre":"UPS DS-UPS1000-X HIKVISION","familia":"UPS","marca":"HIKVISION","stock":{"David":0,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"TONER E352H11L LEXMARK","familia":"SUMINISTROS","marca":"LEXMARK","stock":{"David":0,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 83AD (CF283AD) NEGRO HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":0,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"CABLE HDMI -HDMI AV10050BT2M BELKIN","familia":"ACCESORIOS","marca":"GENERICO","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"OFFICE 365 BUS STAN KLQ-00219 MICROSOFT","familia":"SOFTWARE","marca":"MICROSOFT","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"MOLDURA BLANCA 20X12","familia":"ACCESORIOS","marca":"GENERICO","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CINTA ERC-31B EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":0,"Chiriquí":0,"Santiago":2,"Penonomé":0}},{"nombre":"TONER 215A C W2311A  HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CART. T133420 YELLOW EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"TONER E250A11L LEXMARK","familia":"SUMINISTROS","marca":"LEXMARK","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"TONER CE278AD (78AD) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"TONER Q6002A (124A) YELLOW HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"TINTA T673620-AL LIGHT MAGENTA EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":0,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"ROLLO PAPEL TERMICO 57MM/ACLAS","familia":"SUMINISTROS","marca":"ACLAS","stock":{"David":0,"Chiriquí":31,"Santiago":0,"Penonomé":0}},{"nombre":"CART.T941120-AL NEGRO EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":0,"Chiriquí":5,"Santiago":0,"Penonomé":0}},{"nombre":"CART. CLI-151 XL YELLOW 6480B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":4,"Santiago":0,"Penonomé":0}},{"nombre":"TONER GPR-28 NEGRO CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":0,"Santiago":2,"Penonomé":0}},{"nombre":"TONER GPR-28 CYAN CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"TONER GPR-28 MAGENTA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"TONER GPR-28 YELLOW CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"TONER GPR-43 4792B003AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":2,"Santiago":0,"Penonomé":1}},{"nombre":"CABEZAL DE IMPRESION PF-04 CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CART CLI-42BK BLACK 6384B009AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"CART CLI-42 GRAY CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"CART CLI-42LGY LIGHT GRAY CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":4,"Santiago":0,"Penonomé":0}},{"nombre":"CART CLI-42 YELLOW 6387B009AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"REP.FC6-7478-000 GUIDE CANON","familia":"ACCESORIOS","marca":"CANON","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"TONER GPR-24 CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":0,"Santiago":6,"Penonomé":0}},{"nombre":"TONER 120 CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"TONER GPR-30 NEGRO CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":0,"Santiago":3,"Penonomé":0}},{"nombre":"TONER GPR-30 YELLOW CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"TINTA T962120-AL NEGRA EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":0,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"CART 131 MAGENTA 6270B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CART 131 YELLOW 6269B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"MOCHILA 15.6\" INTELLECT  TBB565LP TARGUS","familia":"ACCESORIOS","marca":"TARGUS","stock":{"David":0,"Chiriquí":0,"Santiago":2,"Penonomé":0}},{"nombre":"MONITOR 27\" FUL HD UMHX3AAE05 ACER","familia":"MONITORES","marca":"ACER","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 130A CYAN (CF351A) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":0,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"CART.964 CYAN 3JA50AL HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CART.964 YELLOW 3JA52AL HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":0,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"CART.964 NEGRO 3JA53AL HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CART.414A CYAN W2021A HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"CART. TONER 145A W1450A HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":0,"Chiriquí":0,"Santiago":2,"Penonomé":0}},{"nombre":"NOT CELERON N150 128GB 4GB W11H  B85MYLA#ABM HP","familia":"COMPUTADORAS","marca":"HP","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"NOT. 15.6\" R7 512 16GB B9TR0LA#ABM HP","familia":"COMPUTADORAS","marca":"HP","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CART C9352AL (22) COLOR HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 55B4000 LEXMARK","familia":"SUMINISTROS","marca":"LEXMARK","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 103 AD W1103AD HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"TONER CF258A 58A NEGRO HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CART.712 3ED68A MAGENTA HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":0,"Chiriquí":1,"Santiago":1,"Penonomé":0}},{"nombre":"BATERIA LP-E17 9967B002AB CANON","familia":"ACCESORIOS","marca":"CANON","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 054 H NEGRO 3028C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":1,"Santiago":3,"Penonomé":0}},{"nombre":"TONER 054 H YELLOW 3025C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":1,"Santiago":2,"Penonomé":0}},{"nombre":"COMBO KIT CABEZAL NEGRO BH-1 Y COLOR CH-1  CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":4,"Santiago":6,"Penonomé":1}},{"nombre":"CART.PFI-007 C CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"CART.PFI-007 M CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"CART.PFI-007 Y CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"PAPEL SATIN 200GSM 2047V135 24\"X100\" CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"CART. 041 NEGRO 0452C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"CART. 041 H NEGRO 0453C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":3,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 046 H BK CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CART CLI-171XL M CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CART PFI-106BK CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CART PFI-106PGY CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CART CLI-171 C CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":1,"Santiago":1,"Penonomé":0}},{"nombre":"TINTA T11A120-AL BK EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":0,"Chiriquí":0,"Santiago":4,"Penonomé":0}},{"nombre":"TONER GPR-51 BLACK 8516B003AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":2,"Santiago":1,"Penonomé":3}},{"nombre":"TONER GPR-51 MAGENTA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":2,"Santiago":1,"Penonomé":4}},{"nombre":"TONER GPR-51 YELLOW CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":2,"Santiago":1,"Penonomé":4}},{"nombre":"CART PGI-2100 Y CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CABLE DE COMUNICACION USB LINK DASCOM","familia":"ACCESORIOS","marca":"DASCOM","stock":{"David":0,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"CINTA 1125 TALLY DACOM","familia":"SUMINISTROS","marca":"DASCOM","stock":{"David":0,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 312A CYAN CF381A  HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"IMPR LBP6030w 8468B003AA CANON","familia":"IMPRESORAS","marca":"CANON","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"IMP G2170 5804C004AA CANON","familia":"IMPRESORAS","marca":"CANON","stock":{"David":0,"Chiriquí":1,"Santiago":1,"Penonomé":3}},{"nombre":"IMP G4170 5807C004AB CANON","familia":"IMPRESORAS","marca":"CANON","stock":{"David":0,"Chiriquí":2,"Santiago":0,"Penonomé":2}},{"nombre":"CAMARA EOS R50 5811C012AA CANON","familia":"CAMARAS","marca":"CANON","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"TINTA T504420-AL YELLOW EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":0,"Chiriquí":5,"Santiago":7,"Penonomé":5}},{"nombre":"IMP ECOTANK L4360 C11CL41301 EPSON","familia":"IMPRESORAS","marca":"EPSON","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"MULTI - CORRIENTE (AS-100CO) ASIUM","familia":"ACCESORIOS","marca":"ASIUM","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"PAPEL CARTA 11699 CHAMEX","familia":"SUMINISTROS","marca":"CHAMEX","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"CINTA 52102001 OKI","familia":"SUMINISTROS","marca":"OKI","stock":{"David":0,"Chiriquí":38,"Santiago":10,"Penonomé":0}},{"nombre":"CINTA ERC-32 B  ER5115II","familia":"SUMINISTROS","marca":"GENERICO","stock":{"David":0,"Chiriquí":7,"Santiago":0,"Penonomé":0}},{"nombre":"CART CLI-151 GRAY CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":3,"Santiago":3,"Penonomé":0}},{"nombre":"CART 131 NEGRO 6272B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CART 131 CYAN 6271B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CART. CL-146 COLOR 8277B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":4,"Santiago":0,"Penonomé":0}},{"nombre":"CART. 119 3479B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"CART. CLI-151 XL NEGRO 6477B001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":1,"Santiago":1,"Penonomé":0}},{"nombre":"CART PG-50BK CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":3,"Santiago":0,"Penonomé":0}},{"nombre":"CABINET TIPO F(6008B001AA) LARGE CANON","familia":"ACCESORIOS","marca":"CANON","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CART CLI-42 MAGENTA 6386B009AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":4,"Santiago":0,"Penonomé":0}},{"nombre":"CART CLI-42 PHOTO MAGENTA 6389B009AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":3,"Santiago":0,"Penonomé":0}},{"nombre":"CART CLI-42 PHOTO CYAN CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":4,"Santiago":0,"Penonomé":0}},{"nombre":"CART CLI-42 CYAN 6385B009AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":3,"Santiago":0,"Penonomé":0}},{"nombre":"PAPEL CARTA 8 1/2 X 11 ULTRAPAPER","familia":"SUMINISTROS","marca":"GENERICO","stock":{"David":0,"Chiriquí":31,"Santiago":0,"Penonomé":0}},{"nombre":"CASH DRAWER RJ12 971GF010000022  CUSTOM","familia":"ACCESORIOS","marca":"CUSTOM","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 126AD CE310AD NEGRO HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"IMP M428fdw LASERJET PRO HP","familia":"IMPRESORAS","marca":"HP","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"SWITCH 8 PORT GIGABIT LS1008G(UN) TP-LINK","familia":"REDES","marca":"TP-LINK","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CART. 664 XL COLOR (F6V30AL) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"TONER CF226A (26A) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"CART.664 NEGRO (F6V29AL) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 30A NEGRO (CF230A) HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CART.964 MAGENTA 3JA51AL HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 215A M W2313A  HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 215A Y W2312A  HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA T673220-AL CYAN EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"TONER CE285A (85A) NEGRO  HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":0,"Chiriquí":1,"Santiago":1,"Penonomé":0}},{"nombre":"TONER TN-223 BK BROTHER","familia":"SUMINISTROS","marca":"BROTHER","stock":{"David":0,"Chiriquí":4,"Santiago":0,"Penonomé":0}},{"nombre":"MOCHILA 15.6\" CITY TSB89004LP TARGUS","familia":"ACCESORIOS","marca":"TARGUS","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"MAINTENANCE BOX SURECOLOR C13S210057 EPSON","familia":"SUMINISTROS","marca":"EPSON","stock":{"David":0,"Chiriquí":0,"Santiago":3,"Penonomé":0}},{"nombre":"IMP LX-350 II EPSON","familia":"IMPRESORAS","marca":"EPSON","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"BROCA DE CONCRETO","familia":"ACCESORIOS","marca":"GENERICO","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CAMARA EXT 4MP 2.8MM 30MTS AUDIO 2CV1043G2-LIDWF HIKVISION","familia":"CAMARAS","marca":"HIKVISION","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"CAMARA MD 4MP 2.8MM 20MTS AUDIO 2CV1F43G2-LIDWF HIKVISION","familia":"CAMARAS","marca":"HIKVISION","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"RELOJ SENSEFACE-3B ZKTECO","familia":"RELOJES","marca":"ZKTECO","stock":{"David":0,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"DISCO DURO EXTERNO 1TB USB STGX1000400 SEAGATE","familia":"ACCESORIOS","marca":"SEAGATE","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"ETIQUETA SUPERTAG VST-R Gris SENSORMATIC","familia":"SENSORMATIC","marca":"SENSORMATIC","stock":{"David":0,"Chiriquí":0,"Santiago":11000,"Penonomé":0}},{"nombre":"ETIQUETA GRIS AM ET-L032","familia":"SENSORMATIC","marca":"SENSORMATIC","stock":{"David":0,"Chiriquí":0,"Santiago":1000,"Penonomé":0}},{"nombre":"USB 32GB SDCZ73-032G-G46 SANDISK","familia":"ACCESORIOS","marca":"SANDISK","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"PAD MOUSE CON GEL KMP-100B KLIP","familia":"ACCESORIOS","marca":"KLIP XTREME","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"MALETIN 15.6\" TBT935GL TARGUS","familia":"ACCESORIOS","marca":"TARGUS","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"MONITOR 21.5\" G4  7UZ36AA HP","familia":"MONITORES","marca":"HP","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"MEM 64GB SANDISK","familia":"ACCESORIOS","marca":"SANDISK","stock":{"David":0,"Chiriquí":0,"Santiago":5,"Penonomé":0}},{"nombre":"BARRA DE SONIDO XTS-650 XTECH","familia":"ACCESORIOS","marca":"XTECH","stock":{"David":0,"Chiriquí":0,"Santiago":2,"Penonomé":0}},{"nombre":"BOCINAS S150 PARA PC LOGITECH","familia":"ACCESORIOS","marca":"LOGITECH","stock":{"David":0,"Chiriquí":0,"Santiago":2,"Penonomé":0}},{"nombre":"TONER 50F4H00 NEGRO LEXMARK","familia":"SUMINISTROS","marca":"LEXMARK","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"REG FVP-3302B  3300W FORZA","familia":"ACCESORIOS","marca":"FORZA","stock":{"David":0,"Chiriquí":0,"Santiago":5,"Penonomé":0}},{"nombre":"IMP IM550F (120V) 418458  RICOH","familia":"COPIADORAS","marca":"RICOH","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"MEDIUM CABINET 550F/600F 1665/02  RICOH","familia":"COPIADORAS","marca":"RICOH","stock":{"David":0,"Chiriquí":0,"Santiago":2,"Penonomé":0}},{"nombre":"MOUSE XTM-310BK  XTECH","familia":"ACCESORIOS","marca":"XTECH","stock":{"David":0,"Chiriquí":0,"Santiago":2,"Penonomé":0}},{"nombre":"RELOJ MB460 ZKTECO","familia":"RELOJES","marca":"ZKTECO","stock":{"David":0,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"REG. VOLTAJE ESP-XG-PCS-15D (0006428MIU) RICOH","familia":"REGULADOR DE VOLTAGE","marca":"RICOH","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"TONER SP4510 NEGRO RICOH","familia":"SUMINISTROS","marca":"RICOH","stock":{"David":0,"Chiriquí":0,"Santiago":2,"Penonomé":0}},{"nombre":"TONER T03 2725C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":0,"Santiago":5,"Penonomé":0}},{"nombre":"IR ADV C3830i  DE SEGUNDA 4913C002AA  CANON","familia":"COPIADORAS","marca":"CANON","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"CART.GI-10 C 3391C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":4,"Santiago":4,"Penonomé":2}},{"nombre":"TINTAS PFI-320MBK 2889C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":5,"Santiago":1,"Penonomé":0}},{"nombre":"TONER 054 H CYAN 3027C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":1,"Santiago":2,"Penonomé":1}},{"nombre":"TONER 054 H MAGENTA 3026C001AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":3,"Santiago":2,"Penonomé":1}},{"nombre":"IMPR G4110 CANON","familia":"IMPRESORAS","marca":"CANON","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":1}},{"nombre":"CART.PFI-007 BK CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"CART. 118 NEGRO VP CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"PAPEL ADHESIVE MATTE VINYL 36\"X66 0546V881 CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"CART.324 BK CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":0,"Santiago":4,"Penonomé":0}},{"nombre":"TINTA PFI-703MBK CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"TONER GPR-30 CYAN CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"TONER GPR-30 MAGENTA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":0,"Santiago":1,"Penonomé":0}},{"nombre":"TONER GPR-51 CYAN CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":1,"Santiago":1,"Penonomé":3}},{"nombre":"TINTA GI-190 C 0668C001AB CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":2,"Santiago":10,"Penonomé":2}},{"nombre":"TINTA GI-190 M 0669C001AB CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":2,"Santiago":9,"Penonomé":2}},{"nombre":"TONER GPR-52 BLACK 9106B003AA CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":4,"Santiago":1,"Penonomé":1}},{"nombre":"CART CLI-171XL BK CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":1,"Santiago":2,"Penonomé":0}},{"nombre":"CART PFI-106Y CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CART PFI-106PM CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CART PFI-106R CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"PFI-107BK 6705B001AA 130ml CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":2,"Santiago":2,"Penonomé":0}},{"nombre":"IMP GX4010 5779C004AA CANON","familia":"IMPRESORAS","marca":"CANON","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"TINTA PFI-321 M CANON","familia":"SUMINISTROS","marca":"CANON","stock":{"David":0,"Chiriquí":2,"Santiago":0,"Penonomé":0}},{"nombre":"TONER 312A M CF383A HP","familia":"SUMINISTROS","marca":"HP","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}},{"nombre":"CAJA FOLDER LEGAL DE COLORES","familia":"UTILES DE OFICINA","marca":"GENERICO","stock":{"David":0,"Chiriquí":1,"Santiago":0,"Penonomé":0}}];
+
+let currentQuery = '';
+
+function normalize(str) {
+  return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
 
 function searchInventory(query) {
-  const q = query.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  const words = q.split(/\s+/).filter(w => w.length > 2);
-  
+  if (!query || query.trim().length < 2) return [];
+  const q = normalize(query.trim());
+  const words = q.split(/\s+/).filter(w => w.length > 1);
+  const seen = new Set();
   const results = [];
+
   for (const item of INVENTORY) {
-    const name = item.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    const brand = item.marca.toLowerCase();
-    const family = item.familia.toLowerCase();
-    
+    const name = normalize(item.nombre);
+    const brand = normalize(item.marca);
+    const family = normalize(item.familia);
+    const key = item.nombre;
+    if (seen.has(key)) continue;
+
     let score = 0;
     for (const word of words) {
       if (name.includes(word)) score += 3;
@@ -307,123 +434,156 @@ function searchInventory(query) {
       if (family.includes(word)) score += 1;
     }
     if (score > 0) {
-      const totalStock = Object.values(item.stock).reduce((a,b) => a+b, 0);
-      results.push({ ...item, score, totalStock });
+      seen.add(key);
+      results.push({ ...item, score });
     }
   }
-  
-  return results.sort((a,b) => b.score - a.score).slice(0, 8);
+  return results.sort((a, b) => b.score - a.score).slice(0, 12);
 }
 
-function formatStockSummary(item) {
-  const branches = Object.entries(item.stock).filter(([,v]) => v > 0);
-  if (branches.length === 0) return "❌ Sin stock";
-  return "✅ Disponible en: " + branches.map(([loc]) => loc).join(", ");
+function getStockByBranch(item) {
+  const merged = {};
+  for (const [key, branch] of Object.entries(STOCK_KEYS)) {
+    if (!merged[branch]) merged[branch] = 0;
+    merged[branch] += item.stock[key] || 0;
+  }
+  // Add Taller separately (no stock key maps to it)
+  return merged;
 }
 
-function setExample(text) {
-  document.getElementById('messageInput').value = text;
+function makeWALink(branch, productName) {
+  const info = BRANCHES[branch];
+  if (!info) return null;
+  const msg = encodeURIComponent(`Hola, quiero consultar disponibilidad de: ${productName}`);
+  return `https://wa.me/${info.wa}?text=${msg}`;
 }
 
-function clearAll() {
-  document.getElementById('messageInput').value = '';
-  document.getElementById('responseCard').style.display = 'none';
-}
+function renderResults(results) {
+  const main = document.getElementById('mainContent');
 
-async function generateResponse() {
-  const message = document.getElementById('messageInput').value.trim();
-  if (!message) return;
-
-  const whatsapp = document.getElementById('whatsappNum').value.trim() || '+507 6000-0000';
-  const agent = document.getElementById('agentName').value.trim();
-  
-  const btn = document.getElementById('generateBtn');
-  btn.disabled = true;
-  btn.textContent = '⏳ Generando...';
-  
-  document.getElementById('responseCard').style.display = 'block';
-  document.getElementById('loadingIndicator').style.display = 'flex';
-  document.getElementById('responseText').style.display = 'none';
-  document.getElementById('responseActions').style.display = 'none';
-
-  // Search inventory
-  const results = searchInventory(message);
-  
-  let inventoryContext = '';
-  if (results.length > 0) {
-    inventoryContext = `\n\nPRODUCTOS ENCONTRADOS EN INVENTARIO:\n`;
-    results.forEach(item => {
-      const hasStock = Object.values(item.stock).some(v => v > 0);
-      const branches = Object.entries(item.stock).filter(([,v]) => v > 0).map(([loc]) => loc);
-      inventoryContext += `- ${item.nombre} (${item.marca}): ${hasStock ? 'DISPONIBLE en ' + branches.join(', ') : 'SIN STOCK'}\n`;
-    });
-  } else {
-    inventoryContext = `\n\nNo se encontraron productos específicos en el inventario para esta consulta.`;
+  if (results.length === 0 && currentQuery.length >= 2) {
+    main.innerHTML = `
+      <div class="no-results">
+        <div class="no-results-emoji">🔎</div>
+        <div class="no-results-title">No encontramos ese producto</div>
+        <div class="no-results-sub">Puedes contactarnos directamente y con gusto te ayudamos.</div>
+      </div>
+      ${renderContactAll()}
+    `;
+    return;
   }
 
-  const systemPrompt = `Eres el asistente de atención al cliente de Blinq Panama, empresa de tecnología. Respondes mensajes de Instagram de manera profesional, cordial y concisa.
-
-REGLAS:
-- Tono profesional pero cercano (tutear está bien)
-- Si el producto está disponible: confirma disponibilidad y ramas donde hay stock, luego invita a contactar por WhatsApp
-- Si no está disponible: sé honesto y ofrece alternativa o redirige a WhatsApp
-- Siempre incluye el número de WhatsApp al final: ${whatsapp}${agent ? ' (preguntar por ' + agent + ')' : ''}
-- Respuesta corta: máximo 4-5 líneas
-- No uses emojis excesivos, máximo 2-3
-- No menciones precios
-- Responde en español
-- Si la consulta no es sobre productos, responde de forma útil y profesional`;
-
-  try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 1000,
-        system: systemPrompt,
-        messages: [{
-          role: "user",
-          content: `Mensaje del cliente en Instagram: "${message}"${inventoryContext}\n\nGenera una respuesta apropiada para este cliente.`
-        }]
-      })
-    });
-
-    const data = await response.json();
-    const text = data.content?.find(c => c.type === 'text')?.text || 'Error al generar respuesta.';
-
-    document.getElementById('loadingIndicator').style.display = 'none';
-    document.getElementById('responseText').style.display = 'block';
-    document.getElementById('responseText').textContent = text;
-    document.getElementById('responseActions').style.display = 'flex';
-
-  } catch (err) {
-    document.getElementById('loadingIndicator').style.display = 'none';
-    document.getElementById('responseText').style.display = 'block';
-    document.getElementById('responseText').textContent = 'Error de conexión. Verifica tu conexión e intenta de nuevo.';
-    document.getElementById('responseActions').style.display = 'flex';
+  if (results.length === 0) {
+    main.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-emoji">📦</div>
+        <div class="empty-title">¿Qué estás buscando?</div>
+        <div class="empty-sub">Escribe el nombre del producto, marca o categoría y te decimos en qué sucursal está disponible.</div>
+      </div>
+    `;
+    return;
   }
 
-  btn.disabled = false;
-  btn.textContent = '✨ Generar Respuesta';
+  let html = `<div class="results-count">Se encontraron <span>${results.length}</span> producto${results.length !== 1 ? 's' : ''}</div>`;
+
+  for (const item of results) {
+    const stockByBranch = getStockByBranch(item);
+    const availableBranches = Object.entries(stockByBranch).filter(([,v]) => v > 0);
+    const hasStock = availableBranches.length > 0;
+
+    let stockHtml = '<div class="stock-grid">';
+    for (const [branch, waInfo] of Object.entries(BRANCHES)) {
+      const qty = stockByBranch[branch] || 0;
+      const avail = qty > 0;
+      stockHtml += `
+        <div class="stock-item ${avail ? 'available' : 'unavailable'}">
+          <div class="stock-dot"></div>
+          <div class="stock-info">
+            <div class="stock-location">${branch}</div>
+            <div class="stock-status">${avail ? 'Disponible' : 'Sin stock'}</div>
+          </div>
+        </div>`;
+    }
+    stockHtml += '</div>';
+
+    let actionsHtml = '';
+    if (hasStock) {
+      actionsHtml = '<div class="card-actions">';
+      for (const [branch] of availableBranches) {
+        const link = makeWALink(branch, item.nombre);
+        if (link) {
+          actionsHtml += `
+            <a href="${link}" target="_blank" class="wa-btn">
+              <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+              ${branch.split('/')[0].trim()}
+            </a>`;
+        }
+      }
+      actionsHtml += '</div>';
+    }
+
+    html += `
+      <div class="product-card">
+        <div class="card-top">
+          <div class="card-brand">${item.marca}</div>
+          <div class="card-name">${item.nombre}</div>
+          <div class="card-family">${item.familia}</div>
+        </div>
+        <div class="card-stock">
+          <div class="stock-title">Disponibilidad por sucursal</div>
+          ${stockHtml}
+        </div>
+        ${actionsHtml}
+      </div>`;
+  }
+
+  main.innerHTML = html;
 }
 
-async function copyResponse() {
-  const text = document.getElementById('responseText').textContent;
-  await navigator.clipboard.writeText(text);
-  const btn = document.getElementById('copyBtn');
-  btn.textContent = '✅ ¡Copiado!';
-  btn.classList.add('copied');
-  setTimeout(() => {
-    btn.textContent = '📋 Copiar respuesta';
-    btn.classList.remove('copied');
-  }, 2000);
+function renderContactAll() {
+  let html = `<div class="contact-all"><div class="contact-all-title">Contáctanos directamente:</div><div class="contact-list">`;
+  for (const [branch, info] of Object.entries(BRANCHES)) {
+    html += `
+      <div class="contact-item">
+        <div class="contact-loc">📍 ${branch}</div>
+        <a href="https://wa.me/${info.wa}" target="_blank" class="contact-wa">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+          ${info.num}
+        </a>
+      </div>`;
+  }
+  html += '</div></div>';
+  return html;
 }
 
-document.getElementById('messageInput').addEventListener('keydown', function(e) {
-  if (e.ctrlKey && e.key === 'Enter') generateResponse();
-});
+let debounceTimer;
+function handleSearch() {
+  const val = document.getElementById('searchInput').value;
+  currentQuery = val;
+  document.getElementById('clearBtn').className = val ? 'search-clear visible' : 'search-clear';
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => {
+    renderResults(searchInventory(val));
+  }, 200);
+}
+
+function clearSearch() {
+  document.getElementById('searchInput').value = '';
+  currentQuery = '';
+  document.getElementById('clearBtn').className = 'search-clear';
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  renderResults([]);
+}
+
+function searchChip(term) {
+  document.getElementById('searchInput').value = term;
+  currentQuery = term;
+  document.getElementById('clearBtn').className = 'search-clear visible';
+  document.querySelectorAll('.chip').forEach(c => {
+    c.classList.toggle('active', c.textContent.toLowerCase().includes(term.toLowerCase()));
+  });
+  renderResults(searchInventory(term));
+}
 </script>
-
 </body>
 </html>
